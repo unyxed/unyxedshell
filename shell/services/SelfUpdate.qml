@@ -11,6 +11,7 @@ import Quickshell.Io
 Singleton {
     id: root
 
+    readonly property bool enabled: false
     readonly property string curlBin: Platform.isWindows ? "curl.exe" : "curl"
     readonly property string repo: "nunreasonable/ii-windows"
     readonly property string setupAssetName: "ii-windows-setup.exe"
@@ -45,7 +46,8 @@ Singleton {
     property int _notificationId: -1
     property bool _updateFromNotification: false
 
-    readonly property bool updateAvailable: Platform.isWindows
+    readonly property bool updateAvailable: root.enabled
+        && Platform.isWindows
         && root.installedVersion !== ""
         && root.latestVersion !== ""
         && root._isNewer(root.latestVersion, root.installedVersion)
@@ -147,7 +149,7 @@ Singleton {
     }
 
     function goBackToStable() {
-        if (!root.canGoBackToStable) return;
+        if (!root.enabled || !root.canGoBackToStable) return;
         const setup = `${Directories.installDir}/ii-windows-setup.exe`.replace(/\//g, "\\");
         Quickshell.execDetached([setup, "--update", "--stable"]);
     }
@@ -174,7 +176,7 @@ Singleton {
     function load() {}
 
     function refresh() {
-        if (!Platform.isWindows || root.checking) return;
+        if (!root.enabled || !Platform.isWindows || root.checking) return;
         root.checking = true;
         root.lastError = "";
         checkProc.command = [root.curlBin, "-sS", "--max-time", "10", "-w", "\nHTTP_STATUS:%{http_code}",
@@ -185,13 +187,13 @@ Singleton {
     }
 
     function _startupCheck() {
-        if (!Platform.isWindows || root._startupChecked || !root._cacheDone || !root._versionDone || !Config.ready) return;
+        if (!root.enabled || !Platform.isWindows || root._startupChecked || !root._cacheDone || !root._versionDone || !Config.ready) return;
         root._startupChecked = true;
         if (Config.options.windowsPort.selfUpdate.enableCheck) root.refresh();
     }
 
     function startUpdate() {
-        if (!Platform.isWindows || root.setupUrl === "" || root.downloading) return;
+        if (!root.enabled || !Platform.isWindows || root.setupUrl === "" || root.downloading) return;
         root.downloading = true;
         root.lastError = "";
         root.downloadDest = `${Directories.selfUpdateDownloadDir}/${root.setupAssetName}`;
@@ -208,7 +210,7 @@ Singleton {
     }
 
     function _maybeNotify() {
-        if (!Config.ready || !Config.options.windowsPort.selfUpdate.notify) return;
+        if (!root.enabled || !Config.ready || !Config.options.windowsPort.selfUpdate.notify) return;
         if (!root.updateAvailable || root._sessionNotifiedVersion === root.latestVersion) return;
         root._sessionNotifiedVersion = root.latestVersion;
         const actions = [...root.notifyIdentity];
