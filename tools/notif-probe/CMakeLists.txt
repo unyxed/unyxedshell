@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 3.20)
+project(notif_probe LANGUAGES CXX)
+set(CMAKE_CXX_STANDARD 20)
+add_executable(notif-probe main.cpp)
+target_compile_definitions(notif-probe PRIVATE NOMINMAX WIN32_LEAN_AND_MEAN UNICODE _UNICODE _CRT_SECURE_NO_WARNINGS)
+target_link_libraries(notif-probe PRIVATE windowsapp runtimeobject ole32 shell32)

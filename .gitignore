@@ -1,0 +1,35 @@
+# private working files: never committed
+BACKLOG.local.md
+*.local.md
+*.local.*
+.private/
+scratch/
+
+# build output
+build/
+dist/
+target/
+toolchain/
+.qmlcache/
+*.exe
+*.dll.bak
+
+# editors / os
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+!/assets/*.png
+*.png
+*.ppm
+/build/
+/dist/
+/ii/
+/quickshell-shims/
+/quickshell/
+/toolchain/
+/tools/songrec/bin/
+/tools/songrec/songrec-win/target/
+/tools/songrec/upstream/
+/tools/vda/bin/
+/wt-*/

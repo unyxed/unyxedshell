@@ -1,0 +1,106 @@
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.services
+import QtQuick
+import QtQuick.Layouts
+
+StyledPopup {
+    id: root
+
+    ColumnLayout {
+        id: columnLayout
+        property string formattedDate: Qt.locale().toString(DateTime.clock.date, "dddd, MMMM dd, yyyy")
+        property string formattedUptime: DateTime.uptime
+        property string todosSection: getUpcomingTodos()
+        property var todaysEvents: {
+            const _r = CalendarEvents.revision;
+            return CalendarEvents.available ? CalendarEvents.eventsForDay(new Date()) : [];
+        }
+        property var remainingEvents: todaysEvents.filter(ev => ev.allDay || ev.end > new Date())
+
+        function formatEventLine(ev) {
+            if (ev.allDay) return `  • ${Translation.tr("All day")} · ${ev.title}`;
+            return `  • ${Qt.locale().toString(ev.start, Config.options?.time.format ?? "hh:mm")} · ${ev.title}`;
+        }
+
+        function getUpcomingTodos() {
+            const unfinishedTodos = Todo.list.filter(function (item) {
+                return !item.done;
+            });
+            if (unfinishedTodos.length === 0) {
+                return Translation.tr("No pending tasks");
+            }
+
+            // Limit to first 5 todos to keep popup manageable
+            const limitedTodos = unfinishedTodos.slice(0, 5);
+            let todoText = limitedTodos.map(function (item, index) {
+                return `  ${index + 1}. ${item.content}`;
+            }).join('\n');
+
+            if (unfinishedTodos.length > 5) {
+                todoText += `\n  ${Translation.tr("... and %1 more").arg(unfinishedTodos.length - 5)}`;
+            }
+
+            return todoText;
+        }
+
+        anchors.centerIn: parent
+        spacing: 4
+
+        Component.onCompleted: {
+            if (CalendarEvents.available) CalendarEvents.markOpened();
+        }
+
+        StyledPopupHeaderRow {
+            icon: "calendar_month"
+            label: columnLayout.formattedDate
+        }
+
+        StyledPopupValueRow {
+            icon: "timelapse"
+            label: Translation.tr("System uptime:")
+            value: columnLayout.formattedUptime
+        }
+
+        // Tasks
+        Column {
+            spacing: 0
+            Layout.fillWidth: true
+
+            StyledPopupValueRow {
+                icon: "checklist"
+                label: Translation.tr("To Do:")
+                value: ""
+            }
+
+            StyledText {
+                horizontalAlignment: Text.AlignLeft
+                wrapMode: Text.Wrap
+                color: Appearance.colors.colOnSurfaceVariant
+                text: columnLayout.todosSection
+            }
+        }
+
+        Column {
+            spacing: 0
+            Layout.fillWidth: true
+            visible: CalendarEvents.available && columnLayout.remainingEvents.length > 0
+
+            StyledPopupValueRow {
+                icon: "event"
+                label: Translation.tr("Today:")
+                value: ""
+            }
+
+            StyledText {
+                horizontalAlignment: Text.AlignLeft
+                wrapMode: Text.Wrap
+                color: Appearance.colors.colOnSurfaceVariant
+                text: columnLayout.remainingEvents.slice(0, 3).map(columnLayout.formatEventLine).join('\n')
+                    + (columnLayout.remainingEvents.length > 3
+                        ? `\n  ${Translation.tr("... and %1 more").arg(columnLayout.remainingEvents.length - 3)}`
+                        : "")
+            }
+        }
+    }
+}

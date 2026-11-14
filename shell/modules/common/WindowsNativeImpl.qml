@@ -1,0 +1,53 @@
+import Quickshell
+import Quickshell.Windows as QSWin
+import QtQml
+
+QtObject {
+    id: root
+
+    readonly property string process: Quickshell.env("IIW_PROCESS") ?? ""
+    readonly property bool full: !root.process || root.process === "shell"
+
+    readonly property QtObject session: QSWin.Session
+    readonly property QtObject stats: root.full ? QSWin.SystemStats : null
+    readonly property QtObject brightness: root.full ? QSWin.Brightness : null
+    readonly property QtObject keyboard: (root.full || root.process === "settings") ? QSWin.Keyboard : null
+    readonly property QtObject inputSettings: (root.full || root.process === "settings") ? QSWin.InputSettings : null
+    readonly property QtObject clipboard: root.full ? QSWin.Clipboard : null
+    readonly property QtObject credentials: root.full ? QSWin.Credentials : null
+    readonly property QtObject input: root.full ? QSWin.Input : null
+    readonly property QtObject nightLight: root.full ? QSWin.NightLight : null
+    readonly property QtObject hotkeys: root.full ? QSWin.Hotkeys : null
+    readonly property QtObject notificationSettings: root.full ? QSWin.NotificationSettings : null
+    readonly property QtObject network: root.full ? QSWin.Network : null
+    readonly property QtObject vpnConnections: root.full ? QSWin.VpnConnections : null
+    readonly property QtObject wallpaper: QSWin.Wallpaper
+    readonly property QtObject imageTools: QSWin.ImageTools
+    readonly property QtObject thumbnailer: root.full ? QSWin.Thumbnailer : null
+    readonly property QtObject fsUtils: QSWin.FsUtils
+    readonly property QtObject equalizer: QSWin.EqualizerApo
+    readonly property QtObject taskbar: root.full ? QSWin.Taskbar : null
+    readonly property QtObject desktopLayer: root.full ? QSWin.DesktopLayer : null
+    readonly property QtObject desktopDrop: root.full ? QSWin.DesktopDrop : null
+    readonly property QtObject startupGate: root.full ? QSWin.StartupGate : null
+    readonly property QtObject screenshot: root.full ? QSWin.Screenshot : null
+    readonly property QtObject ocr: root.full ? QSWin.Ocr : null
+    readonly property QtObject screenRecorder: (root.full || root.process === "settings") ? QSWin.ScreenRecorder : null
+    readonly property QtObject terminalColors: root.full ? QSWin.TerminalColors : null
+    readonly property QtObject tiling: root.full ? QSWin.Tiling : null
+    readonly property QtObject windowManager: root.full ? QSWin.WindowManager : null
+    readonly property QtObject superDrag: root.full ? QSWin.SuperDrag : null
+    readonly property QtObject audioVisualizer: root.full ? QSWin.AudioVisualizer : null
+    readonly property QtObject blur: root.full ? QSWin.BackdropBlur : null
+    readonly property QtObject systemMonitor: root.full ? QSWin.SystemMonitor : null
+    readonly property QtObject fileIndex: root.full ? QSWin.FileIndex : null
+    readonly property QtObject timeZones: root.full ? QSWin.TimeZones : null
+    readonly property QtObject webapps: QSWin.WebApps
+    readonly property QtObject autostart: QSWin.Autostart
+    readonly property QtObject accountAge: root.full || root.process === "settings" || root.process === "welcome" ? QSWin.AccountAge : null
+    readonly property QtObject displays: (root.full || root.process === "settings") ? QSWin.Displays : null
+    readonly property QtObject idlePower: (root.full || root.process === "settings") ? QSWin.IdlePower : null
+    readonly property QtObject calendarEvents: (root.full || root.process === "settings") ? QSWin.CalendarEvents : null
+    readonly property QtObject appActions: root.full ? QSWin.AppActions : null
+    readonly property QtObject windowFrame: (root.full || root.process === "settings") ? QSWin.WindowFrame : null
+}

@@ -1,0 +1,8 @@
+#!/bin/sh
+# Blocks private working files from being committed.
+bad=$(git diff --cached --name-only | grep -E '(^|/)(BACKLOG\.local\.md|\.private/)|\.local\.' || true)
+if [ -n "$bad" ]; then
+  echo "Refusing to commit private working files:" >&2
+  echo "$bad" >&2
+  exit 1
+fi

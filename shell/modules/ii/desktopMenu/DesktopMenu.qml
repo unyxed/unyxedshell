@@ -1,0 +1,345 @@
+pragma ComponentBehavior: Bound
+
+import qs
+import qs.services
+import qs.modules.common
+import qs.modules.common.widgets
+import qs.modules.common.functions
+import qs.modules.settings
+import QtQuick
+import QtQuick.Layouts
+import Qt.labs.folderlistmodel
+import Quickshell
+import Quickshell.Io
+import Quickshell.Wayland
+import Quickshell.Hyprland
+
+Scope {
+    id: desktopMenuScope
+
+    readonly property int carouselExtraCount: 5
+    readonly property string _carouselCurrentWallpaper: FileUtils.trimFileProtocol(Config.options.background.wallpaperPath ?? "")
+
+    FolderListModel {
+        id: carouselFolder
+        folder: {
+            const current = desktopMenuScope._carouselCurrentWallpaper;
+            const lastSlash = current.lastIndexOf("/");
+            return lastSlash === -1 ? "" : FileUtils.folderUrl(current.substring(0, lastSlash));
+        }
+        showDirs: false
+        nameFilters: ["*.jpg", "*.jpeg", "*.png", "*.webp"]
+    }
+
+    readonly property var carouselModel: {
+        const current = desktopMenuScope._carouselCurrentWallpaper;
+        const others = [];
+        for (let i = 0; i < carouselFolder.count; i++) {
+            const fp = FileUtils.trimFileProtocol(carouselFolder.get(i, "filePath").toString());
+            if (fp !== current)
+                others.push(fp);
+        }
+        for (let i = others.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [others[i], others[j]] = [others[j], others[i]];
+        }
+        const extra = others.slice(0, desktopMenuScope.carouselExtraCount);
+        return current.length > 0 ? [current, ...extra] : extra;
+    }
+
+    component DesktopMenuItem: RippleButton {
+        id: itemRoot
+        property string iconName: ""
+        property bool hasSubmenu: false
+        Layout.fillWidth: true
+        implicitHeight: 36
+        buttonRadius: Appearance.rounding.small
+        colBackground: "transparent"
+
+        contentItem: RowLayout {
+            spacing: 10
+            anchors.leftMargin: 10
+            anchors.rightMargin: 10
+            anchors.fill: parent
+
+            MaterialSymbol {
+                text: itemRoot.iconName
+                iconSize: Appearance.font.pixelSize.larger
+                color: Appearance.colors.colOnLayer0
+            }
+            StyledText {
+                Layout.fillWidth: true
+                text: itemRoot.buttonText
+                color: Appearance.colors.colOnLayer0
+            }
+            MaterialSymbol {
+                visible: itemRoot.hasSubmenu
+                text: "chevron_right"
+                iconSize: Appearance.font.pixelSize.normal
+                color: Appearance.colors.colOnLayer0
+                opacity: 0.5
+            }
+        }
+    }
+
+    function openAt(screen, x, y) {
+        if (!screen)
+            return;
+        GlobalStates.desktopMenuScreen = screen;
+        GlobalStates.desktopMenuX = x;
+        GlobalStates.desktopMenuY = y;
+        GlobalStates.desktopMenuOpen = true;
+    }
+
+    function openOnCursorOrFocusedScreen() {
+        if (Platform.isWindows) {
+            const cursor = WindowsNative.input?.cursorPosition() ?? {};
+            const cursorScreen = Quickshell.screens.find(s => s.name === cursor.screen);
+            const focusedScreen = Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name);
+            const screen = cursorScreen ?? focusedScreen ?? Quickshell.screens[0];
+            if (!screen)
+                return;
+            desktopMenuScope.openAt(screen, cursorScreen ? cursor.x : screen.width / 2, cursorScreen ? cursor.y : screen.height / 2);
+            return;
+        }
+        const screen = Quickshell.screens.find(s => s.name === Hyprland.focusedMonitor?.name) ?? Quickshell.screens[0];
+        if (!screen)
+            return;
+        desktopMenuScope.openAt(screen, screen.width / 2, screen.height / 2);
+    }
+
+    function toggle() {
+        if (GlobalStates.desktopMenuOpen) {
+            GlobalStates.desktopMenuOpen = false;
+            return;
+        }
+        desktopMenuScope.openOnCursorOrFocusedScreen();
+    }
+
+    IpcHandler {
+        target: "desktopMenu"
+
+        function toggle(): void {
+            desktopMenuScope.toggle();
+        }
+        function open(): void {
+            desktopMenuScope.openOnCursorOrFocusedScreen();
+        }
+        function close(): void {
+            GlobalStates.desktopMenuOpen = false;
+        }
+    }
+
+    GlobalShortcut {
+        name: "desktopMenuToggle"
+        description: "Toggles ii's desktop menu (wallpaper, settings) at the cursor"
+
+        onPressed: desktopMenuScope.toggle()
+    }
+
+    LazyLoader {
+        active: GlobalStates.desktopMenuOpen
+
+        PanelWindow {
+            id: root
+            screen: GlobalStates.desktopMenuScreen
+            visible: GlobalStates.desktopMenuOpen
+
+            WlrLayershell.namespace: "quickshell:desktopMenu"
+            WlrLayershell.layer: WlrLayer.Overlay
+            WlrLayershell.keyboardFocus: WlrKeyboardFocus.Exclusive
+            exclusionMode: ExclusionMode.Ignore
+            color: "transparent"
+
+            property Component openSubmenuComponent: null
+            property real submenuAnchorY: 0
+            readonly property real submenuWidth: 300
+
+            Timer {
+                id: submenuCloseTimer
+                interval: 250
+                onTriggered: root.openSubmenuComponent = null
+            }
+
+            anchors {
+                top: true
+                bottom: true
+                left: true
+                right: true
+            }
+
+            mask: Region {
+                item: menuCard
+                Region {
+                    item: submenuLoader
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                acceptedButtons: Qt.LeftButton | Qt.RightButton
+                onPressed: GlobalStates.desktopMenuOpen = false
+            }
+
+            StyledRectangularShadow {
+                target: menuCard
+            }
+            Rectangle {
+                id: menuCard
+                x: Math.min(Math.max(GlobalStates.desktopMenuX, 0), Math.max(0, root.width - implicitWidth))
+                y: Math.min(Math.max(GlobalStates.desktopMenuY, 0), Math.max(0, root.height - implicitHeight))
+                implicitWidth: 240
+                implicitHeight: menuColumn.implicitHeight + menuColumn.anchors.margins * 2
+                radius: Appearance.rounding.normal
+                color: Appearance.colors.colUiBackground
+                border.width: 1
+                border.color: Appearance.colors.colLayer0Border
+                focus: true
+                Keys.onEscapePressed: GlobalStates.desktopMenuOpen = false
+
+                MouseArea {
+                    anchors.fill: parent
+                    onPressed: mouse => {
+                        mouse.accepted = true;
+                    }
+                }
+
+                ColumnLayout {
+                    id: menuColumn
+                    anchors {
+                        fill: parent
+                        margins: 6
+                    }
+                    spacing: 2
+
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.bottomMargin: 4
+                        visible: desktopMenuScope.carouselModel.length > 0
+                        implicitHeight: 140
+                        radius: Appearance.rounding.verylarge
+                        color: Appearance.colors.colUiBackground
+                        clip: true
+
+                        Carousel {
+                            anchors.fill: parent
+                            anchors.margins: 8
+                            model: desktopMenuScope.carouselModel
+                            onWallpaperSelected: path => {
+                                Wallpapers.apply(path, Appearance.m3colors.darkmode);
+                                GlobalStates.desktopMenuOpen = false;
+                            }
+                        }
+                    }
+
+                    DesktopMenuItem {
+                        id: wallpaperItem
+                        iconName: "wallpaper"
+                        buttonText: Translation.tr("Wallpaper & style")
+                        hasSubmenu: true
+                        onClicked: {
+                            GlobalStates.desktopMenuOpen = false;
+                            GlobalStates.wallpaperSelectorOpen = true;
+                        }
+
+                        HoverHandler {
+                            onHoveredChanged: {
+                                if (hovered) {
+                                    submenuCloseTimer.stop();
+                                    root.submenuAnchorY = menuCard.y + wallpaperItem.mapToItem(menuCard, 0, 0).y;
+                                    root.openSubmenuComponent = wallpaperSubmenuComponent;
+                                } else {
+                                    submenuCloseTimer.restart();
+                                }
+                            }
+                        }
+                    }
+                    DesktopMenuItem {
+                        iconName: "add_photo_alternate"
+                        buttonText: Translation.tr("Live wallpaper...")
+                        onClicked: {
+                            GlobalStates.desktopMenuOpen = false;
+                            Wallpapers.openFallbackPicker(Appearance.m3colors.darkmode, Config.options.wallpaperSelector.liveWallpapersPath ?? "");
+                        }
+                    }
+                    DesktopMenuItem {
+                        iconName: "stacks"
+                        buttonText: Translation.tr("Drop shelf")
+                        onClicked: {
+                            const screen = GlobalStates.desktopMenuScreen;
+                            const x = GlobalStates.desktopMenuX;
+                            const y = GlobalStates.desktopMenuY;
+                            GlobalStates.desktopMenuOpen = false;
+                            GlobalStates.dropoverScreen = screen;
+                            GlobalStates.dropoverX = x;
+                            GlobalStates.dropoverY = y;
+                            GlobalStates.dropoverOpen = true;
+                        }
+                    }
+                    DesktopMenuItem {
+                        id: widgetsItem
+                        iconName: "widgets"
+                        buttonText: Translation.tr("Widgets")
+                        hasSubmenu: true
+
+                        HoverHandler {
+                            onHoveredChanged: {
+                                if (hovered) {
+                                    submenuCloseTimer.stop();
+                                    root.submenuAnchorY = menuCard.y + widgetsItem.mapToItem(menuCard, 0, 0).y;
+                                    root.openSubmenuComponent = widgetsSubmenuComponent;
+                                } else {
+                                    submenuCloseTimer.restart();
+                                }
+                            }
+                        }
+                    }
+                    Rectangle {
+                        Layout.fillWidth: true
+                        Layout.topMargin: 2
+                        Layout.bottomMargin: 2
+                        height: 1
+                        color: Appearance.colors.colOutlineVariant
+                    }
+                    DesktopMenuItem {
+                        iconName: "settings"
+                        buttonText: Translation.tr("Settings")
+                        onClicked: {
+                            GlobalStates.desktopMenuOpen = false;
+                            SettingsApp.open();
+                        }
+                    }
+                }
+            }
+
+            Component {
+                id: widgetsSubmenuComponent
+                WidgetsSubmenu {}
+            }
+
+            Component {
+                id: wallpaperSubmenuComponent
+                WallpaperSubmenu {}
+            }
+
+            Loader {
+                id: submenuLoader
+                active: root.openSubmenuComponent !== null
+                width: root.submenuWidth
+                sourceComponent: root.openSubmenuComponent
+
+                x: (menuCard.x + menuCard.width + 8 + root.submenuWidth > root.width) ? menuCard.x - root.submenuWidth - 8 : menuCard.x + menuCard.width + 8
+                y: Math.min(Math.max(root.submenuAnchorY, 8), root.height - (item?.implicitHeight ?? 0) - 8)
+
+                HoverHandler {
+                    onHoveredChanged: {
+                        if (hovered)
+                            submenuCloseTimer.stop();
+                        else
+                            submenuCloseTimer.restart();
+                    }
+                }
+            }
+        }
+    }
+}
