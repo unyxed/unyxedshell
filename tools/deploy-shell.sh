@@ -3,8 +3,7 @@ set -euo pipefail
 . "$(dirname "$0")/env.sh"
 
 D="$UNYX/dist/unyxedshell"
-SHIMS="${SHIMS:-$UNYX/quickshell/shims}"
-[ -d "$SHIMS" ] || SHIMS="$UNYX/quickshell-shims/shims"
+SHIMS="${SHIMS:-$UNYX/engine/shims}"
 
 QS_BUILD="${QS_BUILD:-$UNYX/build/qs}"
 DEPS="${DEPS_DIR:-$UNYX/build/deps}"
@@ -47,8 +46,8 @@ done
 
 rm -rf "$D/icons"
 mkdir -p "$D/icons"
-cp -f "$UNYX"/ii/defaults/windows/icons/*.svg "$D/icons/"
-cp -f "$UNYX"/ii/assets/icons/*.svg "$D/icons/"
+cp -f "$UNYX"/shell/defaults/windows/icons/*.svg "$D/icons/"
+cp -f "$UNYX"/shell/assets/icons/*.svg "$D/icons/"
 for f in "$UNYX"/tools/icons/adwaita/*; do
 	case "$f" in
 	*.svg) cp -f "$f" "$D/icons/" ;;
@@ -80,10 +79,10 @@ rm -rf "$D/licenses"
 mkdir -p "$D/licenses/unyxedshell" "$D/licenses/quickshell" "$D/licenses/Qt"
 cp -f "$UNYX/LICENSE" "$D/licenses/unyxedshell/LICENSE.txt"
 cp -f "$UNYX/THIRD-PARTY.md" "$D/licenses/THIRD-PARTY.md"
-cp -f "$UNYX/quickshell/LICENSE" "$D/licenses/quickshell/LICENSE.txt"
-cp -f "$UNYX/quickshell/LICENSE-GPL" "$D/licenses/quickshell/LICENSE-GPL.txt"
-cp -f "$UNYX/quickshell/LICENSE" "$D/licenses/Qt/LICENSE-LGPL-3.0.txt"
-cp -f "$UNYX/quickshell/LICENSE-GPL" "$D/licenses/Qt/LICENSE-GPL-3.0.txt"
+cp -f "$UNYX/engine/LICENSE" "$D/licenses/quickshell/LICENSE.txt"
+cp -f "$UNYX/engine/LICENSE-GPL" "$D/licenses/quickshell/LICENSE-GPL.txt"
+cp -f "$UNYX/engine/LICENSE" "$D/licenses/Qt/LICENSE-LGPL-3.0.txt"
+cp -f "$UNYX/engine/LICENSE-GPL" "$D/licenses/Qt/LICENSE-GPL-3.0.txt"
 printf 'Qt %s (The Qt Company Ltd. and other contributors) is used under the GNU Lesser General Public License v3.\nIts source code is available at https://download.qt.io/archive/qt/ and https://code.qt.io/.\nThe Qt libraries shipped with unyxedshell (Qt6*.dll, plugins and qml) are unmodified and can be replaced with other builds of the same version.\n' "$QT_VERSION" > "$D/licenses/Qt/NOTICE.txt"
 cp -rf "$DEPS"/licenses/. "$D/licenses/"
 
@@ -115,12 +114,12 @@ fi
 
 rm -rf "$D/config/unyxedshell"
 mkdir -p "$D/config"
-(cd "$UNYX/ii" && git ls-files -z --recurse-submodules) | while IFS= read -r -d '' f; do
+(cd "$UNYX/shell" && git ls-files -z --recurse-submodules) | while IFS= read -r -d '' f; do
 	mkdir -p "$D/config/unyxedshell/$(dirname "$f")"
-	cp -fp "$UNYX/ii/$f" "$D/config/unyxedshell/$f"
+	cp -fp "$UNYX/shell/$f" "$D/config/unyxedshell/$f"
 done
 
-QMLCACHE_GEN="${QMLCACHE_GEN:-$UNYX/quickshell/tools/qmlcache-bundle.py}"
+QMLCACHE_GEN="${QMLCACHE_GEN:-$UNYX/engine/tools/qmlcache-bundle.py}"
 QMLCACHEGEN="${QMLCACHEGEN:-$QT_HOST/libexec/qmlcachegen}"
 if [ -f "$QMLCACHE_GEN" ]; then
 	"${PYTHON:-python3}" "$QMLCACHE_GEN" "$D/config/unyxedshell" -q \
