@@ -25,7 +25,7 @@ ApplicationWindow {
 
     visible: (root.pageShown || root.forceShown) && !root.handingOff
     onClosing: Qt.quit()
-    title: "illogical-impulse Settings"
+    title: "unyxedshell Settings"
 
     function chooseLayout() {
         if (!Config.ready || root.layoutChosen)

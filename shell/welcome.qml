@@ -36,7 +36,7 @@ ApplicationWindow {
         Notifications.sendDesktop(Translation.tr("Welcome app"), Translation.tr("Enjoy! You can reopen the welcome app any time with <tt>Super+Shift+Alt+/</tt>. To open the settings app, hit <tt>Super+I</tt>"), ["-a", "Shell"]);
         Qt.quit();
     }
-    title: Translation.tr("illogical-impulse Welcome")
+    title: Translation.tr("unyxedshell Welcome")
 
     Component.onCompleted: {
         if (Platform.isWindows && Quickshell.env("IIW_WATCH_FILES") !== "1")

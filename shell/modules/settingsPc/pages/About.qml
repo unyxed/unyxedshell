@@ -313,6 +313,12 @@ ContentPage {
 
     HeroCard {
         iconSource: Quickshell.iconPath("illogical-impulse")
+        title: "unyxedshell"
+        subtitle: SelfUpdate.installedVersion !== "" ? Translation.tr("Version %1").arg(SelfUpdate.installedVersion) : ""
+    }
+
+    HeroCard {
+        iconSource: Quickshell.iconPath("illogical-impulse")
         title: Translation.tr("illogical-impulse")
         link: "https://github.com/end-4/dots-hyprland"
     }

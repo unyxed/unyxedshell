@@ -36,7 +36,7 @@ FloatingWindow {
     }
 
     visible: content.pageShown || root.forceShown
-    title: "illogical-impulse Settings"
+    title: "unyxedshell Settings"
     implicitWidth: 1100
     implicitHeight: 750
     minimumSize: Qt.size(750, 500)

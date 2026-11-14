@@ -22,7 +22,7 @@ FloatingWindow {
     }
 
     visible: true
-    title: "illogical-impulse Settings"
+    title: "unyxedshell Settings"
     implicitWidth: 1100
     implicitHeight: 700
     minimumSize: Qt.size(900, 600)

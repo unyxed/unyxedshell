@@ -747,7 +747,7 @@ Singleton {
                     property int gapsOut: 5
                     property bool preserveSplit: true
                     property list<string> excluded: [
-                        "title:illogical-impulse Settings",
+                        "title:unyxedshell Settings",
                         "title:*Welcome",
                         "title:Picture-in-Picture*",
                         "title:Picture in picture*"

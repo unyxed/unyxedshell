@@ -10,6 +10,35 @@ ContentPage {
     forceWidth: true
 
     ContentSection {
+        icon: "info"
+        title: Translation.tr("About")
+
+        RowLayout {
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 20
+            Layout.topMargin: 10
+            Layout.bottomMargin: 10
+            IconImage {
+                implicitSize: 80
+                source: Quickshell.iconPath("illogical-impulse")
+            }
+            ColumnLayout {
+                Layout.alignment: Qt.AlignVCenter
+                StyledText {
+                    text: "unyxedshell"
+                    font.pixelSize: Appearance.font.pixelSize.title
+                }
+                StyledText {
+                    visible: SelfUpdate.installedVersion !== ""
+                    text: Translation.tr("Version %1").arg(SelfUpdate.installedVersion)
+                    font.pixelSize: Appearance.font.pixelSize.normal
+                    color: Appearance.colors.colSubtext
+                }
+            }
+        }
+    }
+
+    ContentSection {
         icon: "box"
         title: Translation.tr("Distro")
         
