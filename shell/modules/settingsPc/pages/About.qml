@@ -175,7 +175,7 @@ ContentPage {
 
         W.NoticeBox {
             Layout.fillWidth: true
-            visible: SelfUpdate.canGoBackToStable
+            visible: SelfUpdate.enabled && SelfUpdate.canGoBackToStable
             materialIcon: "science"
             text: Translation.tr("You're on a preview (%1). If something doesn't work, you can go back to the stable version. Your settings stay.").arg(SelfUpdate.installedVersion)
 
@@ -192,7 +192,7 @@ ContentPage {
 
         W.NoticeBox {
             Layout.fillWidth: true
-            visible: SelfUpdate.updateAvailable
+            visible: SelfUpdate.enabled && SelfUpdate.updateAvailable
             materialIcon: "new_releases"
             text: Translation.tr("Update available: %1 \"%2\"").arg(SelfUpdate.latestVersion).arg(SelfUpdate.releaseName)
                 + (SelfUpdate.downloading ? "\n" + Translation.tr("Downloading the update…") : "")
@@ -217,7 +217,7 @@ ContentPage {
 
         W.StyledText {
             Layout.fillWidth: true
-            visible: !SelfUpdate.updateAvailable
+            visible: SelfUpdate.enabled && !SelfUpdate.updateAvailable
             wrapMode: Text.WordWrap
             color: Appearance.colors.colSubtext
             text: SelfUpdate.checking
@@ -231,7 +231,7 @@ ContentPage {
 
         Flow {
             Layout.fillWidth: true
-            visible: !SelfUpdate.updateAvailable
+            visible: SelfUpdate.enabled && !SelfUpdate.updateAvailable
             spacing: 5
 
             W.RippleButtonWithIcon {
@@ -245,6 +245,7 @@ ContentPage {
         }
 
         GroupedList {
+            visible: SelfUpdate.enabled
             ConfigSwitch {
                 buttonIcon: "cloud_sync"
                 text: Translation.tr("Check for updates automatically")

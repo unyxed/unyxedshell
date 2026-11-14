@@ -85,7 +85,7 @@ ContentPage {
 
     }
     ContentSection {
-        visible: Platform.isWindows
+        visible: Platform.isWindows && SelfUpdate.enabled
         icon: "update"
         title: Translation.tr("ii-windows updates")
 

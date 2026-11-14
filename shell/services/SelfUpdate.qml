@@ -37,7 +37,7 @@ Singleton {
     property int setupSize: 0
     property double lastCheckedAt: 0
     property string stableVersion: ""
-    readonly property bool canGoBackToStable: Platform.isWindows && root.installedIsPrerelease
+    readonly property bool canGoBackToStable: root.enabled && Platform.isWindows && root.installedIsPrerelease
 
     property bool _cacheDone: false
     property bool _versionDone: root.installedVersionOverride !== ""
