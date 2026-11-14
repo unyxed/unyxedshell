@@ -28,7 +28,7 @@ Singleton {
 
     readonly property var allowedRoots: ["appearance", "background", "bar", "calendar", "cheatsheet", "crosshair", "custom", "dock", "interactions", "lock", "notifications", "osd", "overview", "settings", "sidebar", "time", "waffles", "wallpaperSelector"]
     readonly property var forbiddenParts: ["__proto__", "prototype", "constructor"]
-    readonly property var spicyKeys: [
+    readonly property var privateKeys: [
         "dock.pinnedApps",
         "bar.screenList",
         "notifications.forceMonitor"
@@ -169,8 +169,8 @@ Singleton {
         if (!root.allowedRoots.includes(parts[0]))
             return true;
         const lower = dottedKey.toLowerCase();
-        for (const spicy of root.spicyKeys) {
-            if (lower === spicy.toLowerCase())
+        for (const privateKey of root.privateKeys) {
+            if (lower === privateKey.toLowerCase())
                 return true;
         }
         if (root.sensitiveNamePattern.test(dottedKey.replace(/[._-]/g, "")))

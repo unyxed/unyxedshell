@@ -25,7 +25,6 @@ AbstractBackgroundWidget {
         const propName = "col" + customClockColorKey.charAt(0).toUpperCase() + customClockColorKey.slice(1);
         return Appearance.colors[propName] ?? root.colText;
     }
-    property bool wallpaperSafetyTriggered: false
     property bool animate: true
     needsColText: clockStyle === "digital"
     x: forceCenter ? ((root.screenWidth - root.width) / 2) : targetX
@@ -111,7 +110,7 @@ AbstractBackgroundWidget {
             id: statusTextBg
             anchors.centerIn: parent
             clip: true
-            opacity: (safetyStatusText.shown || lockStatusText.shown) ? 1 : 0
+            opacity: lockStatusText.shown ? 1 : 0
             visible: opacity > 0
             implicitHeight: statusTextRow.implicitHeight + 5 * 2
             implicitWidth: statusTextRow.implicitWidth + 5 * 2
@@ -135,12 +134,6 @@ AbstractBackgroundWidget {
                 Item {
                     Layout.fillWidth: root.textHorizontalAlignment !== Text.AlignLeft
                     implicitWidth: 1
-                }
-                ClockStatusText {
-                    id: safetyStatusText
-                    shown: root.wallpaperSafetyTriggered
-                    statusIcon: "hide_image"
-                    statusText: Translation.tr("Wallpaper safety enforced")
                 }
                 ClockStatusText {
                     id: lockStatusText

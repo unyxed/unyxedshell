@@ -147,12 +147,6 @@ Singleton {
     property var allActions: searchActions.concat(userActionScripts)
 
     property string mathResult: ""
-    property bool clipboardWorkSafetyActive: {
-        const enabled = Config.options.workSafety.enable.clipboard;
-        const sensitiveNetwork = (StringUtils.stringListContainsSubstring(Network.networkName.toLowerCase(), Config.options.workSafety.triggerCondition.networkNameKeywords));
-        return enabled && sensitiveNetwork;
-    }
-
     function keybindToString(bind) {
         const modmask = bind.modmask ?? 0;
         const mods = [];
@@ -165,13 +159,6 @@ Singleton {
         if (modmask & (1 << 3))
             mods.push("Alt");
         return [...mods, bind.key].filter(part => part).join(" + ");
-    }
-
-    function containsUnsafeLink(entry) {
-        if (entry == undefined)
-            return false;
-        const unsafeKeywords = Config.options.workSafety.triggerCondition.linkKeywords;
-        return StringUtils.stringListContainsSubstring(entry.toLowerCase(), unsafeKeywords);
     }
 
     Timer {
@@ -266,14 +253,9 @@ Singleton {
             // Clipboard
             const searchString = StringUtils.cleanPrefix(root.query, Config.options.search.prefix.clipboard);
             const clipboardResults = Cliphist.fuzzyQuery(searchString).map((entry, index, array) => {
-                const mightBlurImage = Cliphist.entryIsImage(entry) && root.clipboardWorkSafetyActive;
-                let shouldBlurImage = mightBlurImage;
-                if (mightBlurImage) {
-                    shouldBlurImage = shouldBlurImage && (root.containsUnsafeLink(array[index - 1]) || root.containsUnsafeLink(array[index + 1]));
-                }
                 const type = `#${entry.match(/^\s*(\S+)/)?.[1] || ""}`;
                 const pinned = Cliphist.isPinned(entry);
-                return root.reuse(`c\u001f${pinned}\u001f${shouldBlurImage}\u001f${entry}`, entry, () => resultComp.createObject(null, {
+                return root.reuse(`c\u001f${pinned}\u001f${entry}`, entry, () => resultComp.createObject(null, {
                     rawValue: entry,
                     name: StringUtils.cleanCliphistEntry(entry),
                     verb: "",
@@ -304,7 +286,6 @@ Singleton {
                                 Cliphist.deleteEntry(entry);
                             }
                         })],
-                    blurImage: shouldBlurImage
                 }));
             }).filter(Boolean);
             return [...clipboardResults.filter(r => r.pinned), ...clipboardResults.filter(r => !r.pinned)];

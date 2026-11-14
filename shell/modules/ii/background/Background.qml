@@ -76,18 +76,12 @@ Variants {
         property bool wallpaperIsVideo: Wallpapers.isVideoPath(bgRoot.effectiveWallpaperPath)
         readonly property string targetWallpaperPath: wallpaperIsVideo ? Config.options.background.thumbnailPath : effectiveWallpaperPath
         property string wallpaperPath: ""
-        readonly property bool videoLayerActive: Platform.isWindows && wallpaperIsVideo && !wallpaperSafetyTriggered
+        readonly property bool videoLayerActive: Platform.isWindows && wallpaperIsVideo
         readonly property bool videoLayerParked: Platform.isWindows && !videoLayerActive && Wallpapers.currentDesktopWallpaper !== ""
             && Wallpapers.isVideoPath(Config.options.background.wallpaperPath)
         readonly property bool showVideoFrame: videoLayerActive && !(videoWallpaperLoader.item?.ready ?? false)
         readonly property bool desktopCovered: HyprlandData.windowList.some(win => win.monitor == monitor?.id
             && win.workspace?.id === monitor?.activeWorkspace?.id && (win.fullscreen ?? 0) > 0 && !win.minimized)
-        property bool wallpaperSafetyTriggered: {
-            const enabled = Config.options.workSafety.enable.wallpaper;
-            const sensitiveWallpaper = (CF.StringUtils.stringListContainsSubstring(wallpaperPath.toLowerCase(), Config.options.workSafety.triggerCondition.fileKeywords));
-            const sensitiveNetwork = (CF.StringUtils.stringListContainsSubstring(Network.networkName.toLowerCase(), Config.options.workSafety.triggerCondition.networkNameKeywords));
-            return enabled && sensitiveWallpaper && sensitiveNetwork;
-        }
         readonly property real parallaxRation: bgRoot.nativeWallpaper ? 1 : Config.options.background.parallax.workspaceZoom
         property real minSuitableScale: 1 // Some reasonable init, to be updated
         property real effectiveWallpaperScale: minSuitableScale * parallaxRation
@@ -103,8 +97,6 @@ Variants {
         property color dominantColor: Appearance.colors.colPrimary // Default, to be changed
         property bool dominantColorIsDark: dominantColor.hslLightness < 0.5
         property color colText: {
-            if (wallpaperSafetyTriggered)
-                return CF.ColorUtils.mix(Appearance.colors.colOnLayer0, Appearance.colors.colPrimary, 0.75);
             return (GlobalStates.screenLocked && shouldBlur) ? Appearance.colors.colOnLayer0 : CF.ColorUtils.colorWithLightness(Appearance.colors.colPrimary, (dominantColorIsDark ? 0.8 : 0.12));
         }
         Behavior on colText {
@@ -152,7 +144,7 @@ Variants {
         readonly property bool userBlurActive: Config.options.background.showBlur && !bgRoot.wallpaperIsVideo
         readonly property bool blurFullScreen: bgRoot.overviewBlurActive || bgRoot.splitFraction >= 1.0
         readonly property bool wallpaperBlurActive: (bgRoot.userBlurActive || bgRoot.overviewBlurActive)
-            && !bgRoot.nativeWallpaper && !bgRoot.wallpaperSafetyTriggered
+            && !bgRoot.nativeWallpaper
             && (!GlobalStates.screenLocked || !centeredWallpaper.centeredWallpaperEnabled || bgRoot.blurFullScreen)
 
         readonly property var transitionShaders: ["circlePit", "circleSelect", "magic", "Doom", "Peel", "transition", "pixelate", "stripes", "crt", "dissolve", "glitch", "ripple", "shatter"]
@@ -182,11 +174,7 @@ Variants {
             left: true
             right: true
         }
-        color: {
-            if (!bgRoot.wallpaperSafetyTriggered || bgRoot.wallpaperIsVideo)
-                return "transparent";
-            return CF.ColorUtils.mix(Appearance.colors.colLayer0, Appearance.colors.colPrimary, 0.75);
-        }
+        color: "transparent"
         Behavior on color {
             animation: Appearance.animation.elementMoveFast.colorAnimation.createObject(this)
         }
@@ -236,7 +224,7 @@ Variants {
 
         function canAnimateWallpaperChange() {
             return bgRoot.wallpaperAnimation !== "" && bgRoot.visible && bgRoot.drawsWallpaper
-                && !bgRoot.wallpaperSafetyTriggered && !bgRoot.shownWallpaperIsVideo
+                && !bgRoot.shownWallpaperIsVideo
                 && wallpaper.status === Image.Ready && wallpaper.visible
                 && !blurLoader.active && !centeredWallpaper.centeredShapeActive;
         }
@@ -573,7 +561,7 @@ Variants {
                         return - bgRoot.parallaxTotalPixelsY * usedFractionY;
                     }
 
-                    source: (bgRoot.wallpaperSafetyTriggered || !bgRoot.drawsWallpaper) ? "" : bgRoot.wallpaperPath
+                    source: !bgRoot.drawsWallpaper ? "" : bgRoot.wallpaperPath
                     fillMode: Image.PreserveAspectCrop
                     Behavior on x {
                         enabled: !bgRoot.swappingWallpaper
@@ -732,7 +720,7 @@ Variants {
                 id: centeredWallpaper
                 anchors.fill: parent
                 screen: bgRoot.modelData
-                wallpaperPath: bgRoot.wallpaperSafetyTriggered ? "" : bgRoot.wallpaperPath
+                wallpaperPath: bgRoot.wallpaperPath
                 wallpaperIsVideo: bgRoot.wallpaperIsVideo
                 allowed: !bgRoot.nativeWallpaper && !bgRoot.videoLayerActive
                 collageMode: Collage.enabled && !bgRoot.nativeWallpaper
@@ -832,7 +820,6 @@ Variants {
                         scaledScreenWidth: bgRoot.screen.width
                         scaledScreenHeight: bgRoot.screen.height
                         wallpaperScale: 1
-                        wallpaperSafetyTriggered: bgRoot.wallpaperSafetyTriggered
                         wallpaperItem: wallpaper
                         animate: bgRoot.widgetsAnimate
                     }
