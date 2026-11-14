@@ -380,7 +380,7 @@ pub fn preflight(paths: &Paths, action: Action, needed: u64, terminal: bool, ffm
 			Msg::new(
 				"win_too_old",
 				format!(
-					"Windows build {build}: ii-windows needs Windows 10 version 2004 (build 19041) or newer (22H2, build 19045, recommended), or Windows 11"
+					"Windows build {build}: unyxedshell needs Windows 10 version 2004 (build 19041) or newer (22H2, build 19045, recommended), or Windows 11"
 				),
 			)
 			.with("build", build.to_string()),
@@ -437,7 +437,7 @@ pub fn preflight(paths: &Paths, action: Action, needed: u64, terminal: bool, ffm
 			(Some(m), _) => checks.push(check(
 				"existing",
 				"info",
-				Msg::new("installed_version", format!("ii-windows {} is installed", m.version))
+				Msg::new("installed_version", format!("unyxedshell {} is installed", m.version))
 					.with("version", m.version.clone()),
 			)),
 			(None, Action::Install) if paths.install_dir.join("qsw.exe").exists() => checks.push(check(
@@ -455,7 +455,7 @@ pub fn preflight(paths: &Paths, action: Action, needed: u64, terminal: bool, ffm
 			(None, Action::Uninstall | Action::Repair | Action::Update) => checks.push(check(
 				"existing",
 				"error",
-				Msg::new("not_installed", "ii-windows isn't installed by this setup (no install manifest)"),
+				Msg::new("not_installed", "unyxedshell isn't installed by this setup (no install manifest)"),
 			)),
 			_ => {}
 		},
@@ -466,7 +466,7 @@ pub fn preflight(paths: &Paths, action: Action, needed: u64, terminal: bool, ffm
 		checks.push(check(
 			"running",
 			"info",
-			Msg::new("running_will_stop", "illogical-impulse is running and will be closed first"),
+			Msg::new("running_will_stop", "unyxedshell is running and will be closed first"),
 		));
 	}
 	for p in &others {
@@ -643,7 +643,7 @@ fn stop_ii(ctx: &mut Ctx, manifest: Option<&Manifest>) -> bool {
 	ctx.begin("stop");
 	let (mine, _) = ii_processes(&ctx.paths);
 	if mine.is_empty() {
-		ctx.skip("stop", Msg::new("not_running", "illogical-impulse wasn't running"));
+		ctx.skip("stop", Msg::new("not_running", "unyxedshell wasn't running"));
 		return false;
 	}
 	let qs = ctx.paths.qs_exe();
@@ -908,8 +908,8 @@ fn shortcuts_and_entry(ctx: &mut Ctx, m: &mut Manifest) {
 	let settings_args = format!("-n -p \"{}\"", p.settings_qml().display());
 	let mut ok = true;
 	for (lnk, args, desc) in [
-		(&main, "-n -c ii".to_string(), "illogical-impulse shell"),
-		(&settings, settings_args, "illogical-impulse settings"),
+		(&main, "-n -c ii".to_string(), "unyxedshell shell"),
+		(&settings, settings_args, "unyxedshell settings"),
 	] {
 		match win::create_shortcut(lnk, &p.qsw_exe(), &args, &p.install_dir, &icon, desc) {
 			Ok(()) => {
@@ -1842,7 +1842,7 @@ fn ii_shell_running(paths: &Paths) -> bool {
 
 fn launch_exited_msg(paths: &Paths) -> Msg {
 	let folder = paths.quickshell.display().to_string();
-	Msg::new("launch_exited", format!("illogical-impulse closed right after starting; its logs are in {folder}"))
+	Msg::new("launch_exited", format!("unyxedshell closed right after starting; its logs are in {folder}"))
 		.with("folder", folder)
 }
 
@@ -2073,7 +2073,7 @@ pub fn install(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 
 pub fn update(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 	let Some(mut m) = Manifest::load(&ctx.paths.manifest()).ok().flatten() else {
-		return ctx.finish(Err(Msg::new("not_installed", "ii-windows isn't installed by this setup")), false);
+		return ctx.finish(Err(Msg::new("not_installed", "unyxedshell isn't installed by this setup")), false);
 	};
 	let mut plan = source_steps(source);
 	plan.extend(["stop", "files", "config", "shortcuts", "autostart", "finish"]);
@@ -2134,7 +2134,7 @@ pub fn update(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 
 pub fn repair(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 	let Some(mut m) = Manifest::load(&ctx.paths.manifest()).ok().flatten() else {
-		return ctx.finish(Err(Msg::new("not_installed", "ii-windows isn't installed by this setup")), false);
+		return ctx.finish(Err(Msg::new("not_installed", "unyxedshell isn't installed by this setup")), false);
 	};
 	let opts = m.options.clone();
 	let had_policy = m.items.exec_policy.as_ref().is_some_and(|c| c.changed);
@@ -2243,7 +2243,7 @@ fn schedule_leftovers(ctx: &mut Ctx, files: &[PathBuf]) {
 
 pub fn uninstall(ctx: &mut Ctx, run: &RunOptions) -> bool {
 	let Some(mut m) = Manifest::load(&ctx.paths.manifest()).ok().flatten() else {
-		return ctx.finish(Err(Msg::new("not_installed", "ii-windows isn't installed by this setup")), false);
+		return ctx.finish(Err(Msg::new("not_installed", "unyxedshell isn't installed by this setup")), false);
 	};
 	let tools: Vec<String> = m
 		.items

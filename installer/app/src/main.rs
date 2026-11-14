@@ -481,7 +481,7 @@ fn ready(window: tauri::WebviewWindow) {
 fn main() {
 	if !win::webview2_present() {
 		let pt = win::ui_language_is_portuguese();
-		let title = "illogical-impulse Setup";
+		let title = "unyxedshell Setup";
 		let text = if pt {
 			"Este instalador precisa do Microsoft Edge WebView2 Runtime, que esta versão do Windows pode não ter instalado. Abrir a página de download da Microsoft agora?"
 		} else {
@@ -516,7 +516,7 @@ fn main() {
 	let _instance = match win::single_instance("Local\\ii-windows-setup") {
 		Some(h) => h,
 		None => {
-			win::message_box("illogical-impulse Setup", "The setup is already running.");
+			win::message_box("unyxedshell Setup", "The setup is already running.");
 			return;
 		}
 	};
@@ -582,7 +582,7 @@ fn main() {
 		])
 		.setup(move |app| {
 			WebviewWindowBuilder::new(app, "main", WebviewUrl::App("index.html".into()))
-				.title("illogical-impulse Setup")
+				.title("unyxedshell Setup")
 				.inner_size(980.0, 660.0)
 				.resizable(false)
 				.maximizable(false)

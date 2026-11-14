@@ -27,9 +27,9 @@ pub const LOG: &str = "setup.log";
 pub const UNINSTALL_KEY_NAME: &str = "ii-windows";
 pub const RUN_VALUE: &str = "illogical-impulse";
 pub const CREDENTIAL_TARGET: &str = "illogical-impulse";
-pub const SHORTCUT_MAIN: &str = "illogical-impulse.lnk";
-pub const SHORTCUT_SETTINGS: &str = "illogical-impulse Settings.lnk";
-pub const DISPLAY_NAME: &str = "illogical-impulse (ii-windows)";
+pub const SHORTCUT_MAIN: &str = "unyxedshell.lnk";
+pub const SHORTCUT_SETTINGS: &str = "unyxedshell Settings.lnk";
+pub const DISPLAY_NAME: &str = "unyxedshell";
 pub const PUBLISHER: &str = "nunreasonable";
 
 pub const TERMINAL_TOOLS: [(&str, &str); 4] = [

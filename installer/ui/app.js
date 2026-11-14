@@ -355,7 +355,7 @@
 			const s = src.value;
 			const line = s.kind === "offline" ? t("pkg_offline", { path: s.path }) : t("pkg_github", { tag: s.release.tag, size: mb(s.release.zip_size) });
 			const ver = s.kind === "offline" ? s.version : s.release.version;
-			let title = `ii-windows ${esc(ver)}`;
+			let title = `unyxedshell ${esc(ver)}`;
 			if (action === "update" && info.installed) {
 				title = `<span class="version-flow"><span class="from">${esc(info.installed.version)}</span>${icon("arrow")}<span>${esc(ver)}</span></span>`;
 			}
@@ -746,7 +746,6 @@
 		const folder = m.params && m.params.folder;
 		let btn = path && kind === "note" ? `<button type="button" class="mini-btn" data-open="${esc(path)}">${icon("folder")}${esc(t("open"))}</button>` : "";
 		if (folder) btn += `<button type="button" class="mini-btn" data-open="${esc(folder)}">${icon("folder")}${esc(t("open"))}</button>`;
-		if (m.key === "launch_exited") btn += `<button type="button" class="mini-btn" data-url="https://github.com/nunreasonable/ii-windows/issues/new">${icon("info")}${esc(t("report"))}</button>`;
 		return `<div class="${kind === "note" ? "note-item" : kind === "error" ? "warn-item error-item" : "warn-item"}">${icon(kind === "note" ? "info" : kind === "error" ? "error" : "warn")}<span class="note-text">${esc(msg(m))}</span>${btn}</div>`;
 	}
 
