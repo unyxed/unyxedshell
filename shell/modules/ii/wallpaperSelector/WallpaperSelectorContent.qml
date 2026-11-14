@@ -16,14 +16,8 @@ MouseArea {
     property real previewCellAspectRatio: 4 / 3
     property bool useDarkMode: Appearance.m3colors.darkmode
     property bool shown: true
-    property string source: "local"
-    property string selectedResolution: "1080p"
-    property string selectedColorGroup: ""
     property bool showControls: false
     readonly property bool toolbarVisible: root.showControls || Config.options.wallpaperSelector.showSearchbar
-    readonly property var onlineProviders: ["unsplash", "pexels", "blapples", "naive"]
-    readonly property bool onlineSource: root.onlineProviders.includes(root.source)
-    readonly property Item activeOnlineLoader: root.source === "wallhaven" ? wallhavenLoader : (root.onlineSource ? onlineLoader : null)
     readonly property string targetDesktopId: Wallpapers.selectorDesktopId
     readonly property string targetDesktopWallpaper: Wallpapers.desktopWallpaperFor(root.targetDesktopId)
     readonly property string currentTargetPath: root.targetDesktopWallpaper || Config.options.background.wallpaperPath
@@ -32,7 +26,7 @@ MouseArea {
 
     property bool spicyRevealed: false
     readonly property bool inSpicyDir: Wallpapers.isInSpicyFolder(Wallpapers.effectiveDirectory)
-    readonly property bool spicyBlurActive: root.source === "local" && root.inSpicyDir && !root.spicyRevealed
+    readonly property bool spicyBlurActive: root.inSpicyDir && !root.spicyRevealed
     onInSpicyDirChanged: if (!root.inSpicyDir)
                              root.spicyRevealed = false
 
@@ -125,18 +119,13 @@ MouseArea {
         target: Wallpapers
         function onDirectoryChanged() {
             Wallpapers.stopPreview();
-            if (root.shown && root.source === "local")
+            if (root.shown)
                 root.updateThumbnails();
         }
     }
 
     onShownChanged: {
-        if (root.shown && root.source === "local")
-            root.updateThumbnails();
-    }
-    onSourceChanged: {
-        Wallpapers.stopPreview();
-        if (root.shown && root.source === "local")
+        if (root.shown)
             root.updateThumbnails();
     }
 
@@ -169,14 +158,14 @@ MouseArea {
 
     function queuePreview() {
         if (!Config.options.background.enableWallpaperPreview || GlobalStates.wallpaperSelectorTarget === "lockWall"
-            || root.source !== "local" || root.spicyBlurActive
+            || root.spicyBlurActive
             || !root.targetShown)
             return;
         previewTimer.restart();
     }
 
     function previewCurrent() {
-        if (!GlobalStates.wallpaperSelectorOpen || root.source !== "local" || root.spicyBlurActive)
+        if (!GlobalStates.wallpaperSelectorOpen || root.spicyBlurActive)
             return;
         const model = Wallpapers.folderModel;
         const index = grid.currentIndex;
@@ -234,34 +223,19 @@ MouseArea {
             Wallpapers.navigateForward();
             event.accepted = true;
         } else if (event.key === Qt.Key_Left) {
-            if (root.source === "local")
-                grid.moveSelection(-1);
-            else
-                root.activeOnlineLoader?.item?.moveSelection(-1);
+            grid.moveSelection(-1);
             event.accepted = true;
         } else if (event.key === Qt.Key_Right) {
-            if (root.source === "local")
-                grid.moveSelection(1);
-            else
-                root.activeOnlineLoader?.item?.moveSelection(1);
+            grid.moveSelection(1);
             event.accepted = true;
         } else if (event.key === Qt.Key_Up) {
-            if (root.source === "local")
-                grid.moveSelection(-grid.columns);
-            else
-                root.activeOnlineLoader?.item?.moveSelection(-root.columns);
+            grid.moveSelection(-grid.columns);
             event.accepted = true;
         } else if (event.key === Qt.Key_Down) {
-            if (root.source === "local")
-                grid.moveSelection(grid.columns);
-            else
-                root.activeOnlineLoader?.item?.moveSelection(root.columns);
+            grid.moveSelection(grid.columns);
             event.accepted = true;
         } else if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-            if (root.source === "local")
-                grid.activateCurrent();
-            else
-                root.activeOnlineLoader?.item?.activateCurrent();
+            grid.activateCurrent();
             event.accepted = true;
         } else if (event.key === Qt.Key_Backspace) {
             if (filterField.text.length > 0) {
@@ -454,7 +428,6 @@ MouseArea {
                     AddressBar {
                         id: addressBar
                         Layout.fillWidth: true
-                        visible: root.source === "local"
                         directory: Wallpapers.effectiveDirectory
                         onNavigateToDirectory: path => {
                             Wallpapers.setDirectory(path.length == 0 ? "/" : path);
@@ -462,56 +435,6 @@ MouseArea {
                         radius: wallpaperGridBackground.radius - 4
                     }
 
-                    StyledText {
-                        visible: root.source !== "local"
-                        Layout.fillWidth: true
-                        text: sourceCombo.model.find(m => m.value === root.source)?.displayName ?? ""
-                        font.pixelSize: Appearance.font.pixelSize.normal
-                        color: Appearance.colors.colOnLayer1
-                    }
-
-                    StyledComboBox {
-                        id: sourceCombo
-                        implicitWidth: 150
-                        model: [
-                            {
-                                value: "local",
-                                displayName: Translation.tr("Local"),
-                                icon: "folder"
-                            },
-                            {
-                                value: "wallhaven",
-                                displayName: Translation.tr("Wallhaven"),
-                                icon: "travel_explore"
-                            },
-                            {
-                                value: "blapples",
-                                displayName: Translation.tr("Blapples"),
-                                icon: "travel_explore"
-                            },
-                            {
-                                value: "naive",
-                                displayName: Translation.tr("NA-ive"),
-                                icon: "travel_explore"
-                            },
-                            {
-                                value: "unsplash",
-                                displayName: Translation.tr("Unsplash"),
-                                icon: "travel_explore"
-                            },
-                            {
-                                value: "pexels",
-                                displayName: Translation.tr("Pexels"),
-                                icon: "travel_explore"
-                            },
-                        ]
-                        textRole: "displayName"
-                        currentIndex: Math.max(0, model.findIndex(m => m.value === root.source))
-                        onCurrentIndexChanged: {
-                            root.source = model[currentIndex].value;
-                            root.forceActiveFocus();
-                        }
-                    }
                 }
 
                 Item {
@@ -519,46 +442,9 @@ MouseArea {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
-                    Loader {
-                        id: wallhavenLoader
-                        anchors.fill: parent
-                        active: root.source === "wallhaven"
-                        visible: active
-                        sourceComponent: WallhavenSearchGrid {
-                            columns: root.columns
-                            previewCellAspectRatio: root.previewCellAspectRatio
-                            useDarkMode: root.useDarkMode
-                            onWallpaperApplied: {
-                                if (Config.options.wallpaperSelector.closeAfterSelection)
-                                    GlobalStates.wallpaperSelectorOpen = false;
-                            }
-                        }
-                    }
-
-                    Loader {
-                        id: onlineLoader
-                        anchors.fill: parent
-                        active: root.onlineSource
-                        visible: active
-                        sourceComponent: OnlineWallpaperGrid {
-                            provider: root.source
-                            resolution: root.selectedResolution
-                            colorGroup: root.selectedColorGroup
-                            columns: root.columns
-                            previewCellAspectRatio: root.previewCellAspectRatio
-                            onWallpaperSelected: path => {
-                                Wallpapers.apply(path, root.useDarkMode);
-                                if (Config.options.wallpaperSelector.closeAfterSelection)
-                                    GlobalStates.wallpaperSelectorOpen = false;
-                            }
-                            onUpdateThumbnailsRequested: root.updateThumbnails()
-                        }
-                    }
-
                     Item {
                         id: localGridArea
                         anchors.fill: parent
-                        visible: root.source === "local"
 
                         StyledIndeterminateProgressBar {
                             id: indeterminateProgressBar
@@ -776,7 +662,6 @@ MouseArea {
                         }
 
                         Toolbar {
-                            visible: root.source === "local"
 
                             IconToolbarButton {
                                 implicitWidth: height
@@ -902,183 +787,6 @@ MouseArea {
                             }
                         }
 
-                        Loader {
-                            active: root.source === "wallhaven"
-                            visible: active
-                            sourceComponent: Toolbar {
-                                id: wallhavenToolbar
-
-                                property bool _searchFieldReady: false
-
-                                Timer {
-                                    id: searchDebounce
-                                    interval: 500
-                                    onTriggered: WallhavenSearch.search(wallhavenSearchField.text, 1)
-                                }
-
-                                ToolbarTextField {
-                                    id: wallhavenSearchField
-                                    text: WallhavenSearch.currentQuery
-                                    placeholderText: Translation.tr("Search Wallhaven...")
-                                    implicitWidth: 220
-                                    onTextChanged: {
-                                        if (wallhavenToolbar._searchFieldReady)
-                                            searchDebounce.restart();
-                                    }
-                                    onAccepted: {
-                                        searchDebounce.stop();
-                                        WallhavenSearch.search(text, 1);
-                                    }
-                                    Keys.onPressed: event => {
-                                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                            event.accepted = true;
-                                            return;
-                                        }
-                                        event.accepted = false;
-                                    }
-                                    Component.onCompleted: {
-                                        Qt.callLater(() => wallhavenToolbar._searchFieldReady = true);
-                                    }
-                                }
-
-                                RowLayout {
-                                    visible: WallhavenSearch.currentResults.length > 0
-                                    spacing: 4
-
-                                    IconToolbarButton {
-                                        implicitWidth: height
-                                        enabled: !WallhavenSearch.fetching && WallhavenSearch.currentPage > 1
-                                        text: "chevron_left"
-                                        onClicked: WallhavenSearch.previousPage()
-                                    }
-
-                                    StyledText {
-                                        text: WallhavenSearch.currentPage + " / " + WallhavenSearch.lastPage
-                                        font.pixelSize: Appearance.font.pixelSize.small
-                                        color: Appearance.colors.colSubtext
-                                    }
-
-                                    IconToolbarButton {
-                                        implicitWidth: height
-                                        enabled: !WallhavenSearch.fetching && WallhavenSearch.currentPage
-                                                 < WallhavenSearch.lastPage
-                                        text: "chevron_right"
-                                        onClicked: WallhavenSearch.nextPage()
-                                    }
-                                }
-
-                                IconToolbarButton {
-                                    implicitWidth: height
-                                    text: "tune"
-                                    toggled: wallhavenLoader.item?.showSettings ?? false
-                                    onClicked: {
-                                        if (wallhavenLoader.item)
-                                            wallhavenLoader.item.toggleSettings();
-                                    }
-                                    StyledToolTip {
-                                        text: Translation.tr("Wallhaven search settings")
-                                    }
-                                }
-
-                                IconToolbarButton {
-                                    implicitWidth: height
-                                    text: root.useDarkMode ? "dark_mode" : "light_mode"
-                                    onClicked: root.useDarkMode = !root.useDarkMode
-                                    StyledToolTip {
-                                        text: Translation.tr(
-                                                  "Click to toggle light/dark mode\n(applied when wallpaper is chosen)")
-                                    }
-                                }
-
-                                IconToolbarButton {
-                                    implicitWidth: height
-                                    text: "refresh"
-                                    onClicked: WallhavenSearch.search(WallhavenSearch.currentQuery, 1)
-                                    StyledToolTip {
-                                        text: Translation.tr("Refresh search results")
-                                    }
-                                }
-                            }
-                        }
-
-                        Loader {
-                            active: root.onlineSource
-                            visible: active
-                            sourceComponent: Toolbar {
-                                id: onlineToolbar
-
-                                ToolbarTextField {
-                                    id: onlineSearchField
-                                    text: OnlineWallpapers.query
-                                    placeholderText: Translation.tr("Search online wallpapers...")
-                                    implicitWidth: 180
-                                    onTextChanged: OnlineWallpapers.query = text
-                                    onAccepted: OnlineWallpapers.fetch()
-                                    Keys.onPressed: event => {
-                                        if (event.key === Qt.Key_Return || event.key === Qt.Key_Enter) {
-                                            event.accepted = true;
-                                            return;
-                                        }
-                                        event.accepted = false;
-                                    }
-                                    Connections {
-                                        target: GlobalStates
-                                        function onWallpaperSelectorOpenChanged() {
-                                            if (!GlobalStates.wallpaperSelectorOpen)
-                                                onlineSearchField.text = "";
-                                        }
-                                    }
-                                }
-
-                                StyledComboBox {
-                                    implicitWidth: 90
-                                    model: [
-                                        { value: "1080p", displayName: "1080p" },
-                                        { value: "2K", displayName: "2K" },
-                                        { value: "4K", displayName: "4K" },
-                                    ]
-                                    textRole: "displayName"
-                                    currentIndex: Math.max(0, model.findIndex(m => m.value === root.selectedResolution))
-                                    onCurrentIndexChanged: root.selectedResolution = model[currentIndex].value
-                                }
-
-                                CustomColorSelectionArray {
-                                    visible: root.source === "naive" || root.source === "blapples"
-                                    swatchSize: 22
-                                    currentValue: root.selectedColorGroup
-                                    options: [
-                                        { value: "", displayName: Translation.tr("All colors"), color: "transparent", rainbow: true },
-                                        { value: "red", displayName: Translation.tr("Red"), color: "#E0483E" },
-                                        { value: "orange", displayName: Translation.tr("Orange"), color: "#E08A3E" },
-                                        { value: "yellow", displayName: Translation.tr("Yellow"), color: "#E0C93E" },
-                                        { value: "green", displayName: Translation.tr("Green"), color: "#6CBF5C" },
-                                        { value: "blue", displayName: Translation.tr("Blue"), color: "#4C7FE0" },
-                                        { value: "purple", displayName: Translation.tr("Purple"), color: "#8A5CE0" },
-                                    ]
-                                    onSelected: newValue => root.selectedColorGroup = newValue
-                                }
-
-                                IconToolbarButton {
-                                    implicitWidth: height
-                                    text: root.useDarkMode ? "dark_mode" : "light_mode"
-                                    onClicked: root.useDarkMode = !root.useDarkMode
-                                    StyledToolTip {
-                                        text: Translation.tr(
-                                                  "Click to toggle light/dark mode\n(applied when wallpaper is chosen)")
-                                    }
-                                }
-
-                                IconToolbarButton {
-                                    implicitWidth: height
-                                    text: "refresh"
-                                    onClicked: OnlineWallpapers.fetch()
-                                    StyledToolTip {
-                                        text: Translation.tr("Refresh search results")
-                                    }
-                                }
-                            }
-                        }
-
                         ToolbarPairedFab {
                             iconText: "close"
                             onClicked: GlobalStates.wallpaperSelectorOpen = false
@@ -1102,7 +810,6 @@ MouseArea {
                 previewTimer.stop();
                 Wallpapers.stopPreview();
                 GlobalStates.wallpaperSelectorTarget = "wallpaper";
-                WallhavenSearch.clearQuery();
             }
         }
     }

@@ -31,8 +31,6 @@ Singleton {
     readonly property var spicyKeys: [
         "background.konachanSpicy",
         "background.konachanExtraTags",
-        "wallpaperSelector.wallhavenPurity",
-        "wallpaperSelector.wallhavenApiKey",
         "wallpaperSelector.wppFolder",
         "wallpaperSelector.wppSpicyFolder",
         "dock.pinnedApps",
