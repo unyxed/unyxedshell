@@ -33,3 +33,9 @@ Thumbs.db
 /tools/songrec/upstream/
 /tools/vda/bin/
 /wt-*/
+
+# needed sources that the generic rules above would hide
+!/engine/src/build/
+!/shell/assets/images/
+!/shell/assets/images/*.png
+!/installer/app/icons/*.png
