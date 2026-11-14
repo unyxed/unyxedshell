@@ -8,6 +8,6 @@ Get-Process qsw -ErrorAction SilentlyContinue | Stop-Process -Force
 robocopy $src $dst /MIR /XD .git .qmlcache /NFL /NDL /NJH /NJS | Out-Null
 if ($LASTEXITCODE -ge 8) { throw "robocopy failed ($LASTEXITCODE)" }
 Remove-Item (Join-Path $dst '.qmlcache') -Recurse -Force -ErrorAction SilentlyContinue
-$lnk = Get-ChildItem "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter 'illogical-impulse*.lnk' -Recurse | Select-Object -First 1
+$lnk = Get-ChildItem "$env:APPDATA\Microsoft\Windows\Start Menu\Programs" -Filter 'illogical-impulse.lnk' -Recurse | Select-Object -First 1
 if ($lnk) { Start-Process $lnk.FullName } else { Write-Warning 'Start menu shortcut not found; start the shell manually.' }
 Write-Output "Synced to $dst. Logs: $env:LOCALAPPDATA\quickshell\run\by-id\<run>\log.log"
