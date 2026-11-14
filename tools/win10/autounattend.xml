@@ -81,7 +81,7 @@
         </SynchronousCommand>
         <SynchronousCommand wcm:action="add">
           <Order>2</Order>
-          <Description>Install the ii-windows test agent from the unattend disc</Description>
+          <Description>Install the unyxedshell test agent from the unattend disc</Description>
           <CommandLine>cmd /c for %d in (D E F G H) do if exist %d:\setup-agent.ps1 powershell.exe -NoProfile -ExecutionPolicy Bypass -File %d:\setup-agent.ps1</CommandLine>
         </SynchronousCommand>
       </FirstLogonCommands>

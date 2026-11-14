@@ -18,7 +18,7 @@ index 7879205..6c14048 100644
 -    set_target_properties(LaTeXQtSample PROPERTIES OUTPUT_NAME LaTeX)
 -    set_target_properties(LaTeXQtSample PROPERTIES AUTOMOC ON)
 +    if (WIN32 AND NOT LATEX_QT_GUI_SAMPLE)
-+        # ii-windows: no gtkmm/cairomm on Windows, so the `-headless` CLI that
++        # unyxedshell: no gtkmm/cairomm on Windows, so the `-headless` CLI that
 +        # ii/services/LatexRenderer.qml spawns is this Qt+QSvgGenerator build instead of
 +        # LaTeXGtkSample. See src/samples/qt_headless_main.cpp.
 +        find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Svg REQUIRED)

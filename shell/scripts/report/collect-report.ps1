@@ -9,7 +9,7 @@ param(
 $ErrorActionPreference = 'Continue'
 $utf8 = New-Object Text.UTF8Encoding($false)
 $stamp = Get-Date -Format 'yyyyMMdd-HHmmss'
-$work = Join-Path $env:TEMP "ii-windows-report-$stamp"
+$work = Join-Path $env:TEMP "unyxedshell-report-$stamp"
 New-Item -ItemType Directory -Force $work | Out-Null
 
 $userPattern = '(?i)(Users[\\/]+)' + [regex]::Escape($env:USERNAME) + '(?=[\\/"]|$)'
@@ -69,7 +69,7 @@ foreach ($log in $logs) {
     CopyText $log.FullName $label 500 50000
 }
 
-$install = Join-Path $env:LOCALAPPDATA 'ii-windows'
+$install = Join-Path $env:LOCALAPPDATA 'unyxedshell'
 CopyText (Join-Path $install 'setup.log') 'setup-log.txt' 200 3000
 
 if ($IncludeDump) {
@@ -91,7 +91,7 @@ if ($faults.Count -gt 0) {
 
 $info = New-Object Collections.Generic.List[string]
 if (-not $Version -and (Test-Path (Join-Path $install 'VERSION'))) { $Version = (Get-Content (Join-Path $install 'VERSION') -Raw).Trim() }
-$info.Add("ii-windows: $Version")
+$info.Add("unyxedshell: $Version")
 $qsw = Join-Path $install 'qsw.exe'
 if (Test-Path $qsw) {
     $rev = Select-String -LiteralPath $qsw -Pattern 'revision [0-9a-f]{7}' -List | Select-Object -First 1
@@ -156,7 +156,7 @@ $info.Add("windows error events for ii in the last 7 days: " + $faults.Count)
 
 $desktop = [Environment]::GetFolderPath('Desktop')
 if (-not $desktop -or -not (Test-Path $desktop)) { $desktop = $env:TEMP }
-$zip = Join-Path $desktop "ii-windows-report-$stamp.zip"
+$zip = Join-Path $desktop "unyxedshell-report-$stamp.zip"
 Compress-Archive -Path (Join-Path $work '*') -DestinationPath $zip -Force
 Remove-Item -Recurse -Force $work -ErrorAction SilentlyContinue
 if (-not (Test-Path $zip)) {

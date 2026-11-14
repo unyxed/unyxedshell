@@ -1,5 +1,5 @@
 [package]
-name = "iiw-setup-core"
+name = "unyxedshell-setup-core"
 version.workspace = true
 edition.workspace = true
 publish.workspace = true

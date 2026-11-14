@@ -1,9 +1,9 @@
-param([string]$Root = 'C:\ii-windows\smoketest')
+param([string]$Root = 'C:\unyxedshell\smoketest')
 
 $ErrorActionPreference = 'Continue'
-$inst = Join-Path $env:LOCALAPPDATA 'ii-windows'
-$dev = Join-Path $env:IIW_ROOT 'ii-windows'
-$configDir = Join-Path $env:LOCALAPPDATA 'quickshell\ii'
+$inst = Join-Path $env:LOCALAPPDATA 'unyxedshell'
+$dev = Join-Path $env:UNYX_ROOT 'unyxedshell'
+$configDir = Join-Path $env:LOCALAPPDATA 'quickshell\unyxedshell'
 $runRoot = Join-Path $env:LOCALAPPDATA 'quickshell\run\by-id'
 $results = New-Object Collections.Generic.List[string]
 $script:fails = 0
@@ -17,7 +17,7 @@ function Check([string]$name, [bool]$ok, [string]$detail = '') {
 function Note([string]$name, [string]$detail) { $results.Add("INFO  $name  $detail") }
 
 function IpcT {
-    $p = Start-Process (Join-Path $inst 'qs.exe') -ArgumentList (@('-c', 'ii', 'ipc', 'call') + $args) -WindowStyle Hidden -PassThru
+    $p = Start-Process (Join-Path $inst 'qs.exe') -ArgumentList (@('-c', 'unyxedshell', 'ipc', 'call') + $args) -WindowStyle Hidden -PassThru
     if (-not $p.WaitForExit(5000)) { try { $p.Kill() } catch {} }
 }
 
@@ -27,7 +27,7 @@ function PressEscape { [SmokeKeys]::keybd_event(0x1B, 0, 0, [UIntPtr]::Zero); St
 function ShellLog {
     Get-ChildItem $runRoot -Directory -ErrorAction SilentlyContinue | Sort-Object LastWriteTime -Descending | ForEach-Object {
         $log = Join-Path $_.FullName 'log.log'
-        if ((Test-Path $log) -and ((Get-Content $log -TotalCount 1) -match 'quickshell/ii/shell\.qml')) { return $log }
+        if ((Test-Path $log) -and ((Get-Content $log -TotalCount 1) -match 'quickshell/unyxedshell/shell\.qml')) { return $log }
     } | Select-Object -First 1
 }
 function LogErrors([string]$log) { if (-not $log) { return @() }; @(Get-Content $log | Select-String -Pattern $errorPattern | ForEach-Object { $_.Line }) }
@@ -38,7 +38,7 @@ function NewestLogOf([datetime]$since) {
 function GuiSwitches { (Get-CimInstance Win32_PerfRawData_PerfProc_Thread -Filter "Name='qsw/0'" -ErrorAction SilentlyContinue | Select-Object -First 1).ContextSwitchesPersec }
 function ShellProcess { Get-Process qsw -ErrorAction SilentlyContinue | Where-Object { $_.Path -eq (Join-Path $inst 'qsw.exe') } | Sort-Object StartTime | Select-Object -First 1 }
 function StartShell {
-    $p = Start-Process -PassThru -FilePath (Join-Path $inst 'qsw.exe') -ArgumentList '-n', '-c', 'ii' -WorkingDirectory $inst
+    $p = Start-Process -PassThru -FilePath (Join-Path $inst 'qsw.exe') -ArgumentList '-n', '-c', 'unyxedshell' -WorkingDirectory $inst
     Start-Sleep 25
     $p
 }
@@ -58,9 +58,9 @@ function RunHarness([string]$qml, [hashtable]$envs, [int]$seconds) {
     $p
 }
 
-Get-Process qsw, qs, ii-windows-setup, PING -ErrorAction SilentlyContinue | Stop-Process -Force
+Get-Process qsw, qs, unyxedshell-setup, PING -ErrorAction SilentlyContinue | Stop-Process -Force
 Start-Sleep 2
-robocopy $dev $inst /E /XD config /XF ii-windows-setup.exe install-manifest.json VERSION /NFL /NDL /NJH /NJS /NP | Out-Null
+robocopy $dev $inst /E /XD config /XF unyxedshell-setup.exe install-manifest.json VERSION /NFL /NDL /NJH /NJS /NP | Out-Null
 robocopy (Join-Path $dev 'config\ii') (Join-Path $inst 'config\ii') /MIR /NFL /NDL /NJH /NJS /NP | Out-Null
 robocopy (Join-Path $inst 'config\ii') $configDir /MIR /XF config.json /NFL /NDL /NJH /NJS /NP | Out-Null
 $rev = Select-String -LiteralPath (Join-Path $inst 'qsw.exe') -Pattern 'revision [0-9a-f]{7}' -List | Select-Object -First 1
@@ -133,7 +133,7 @@ Check 'idle cpu under 3 s per 30 s' ($cpu -lt 3000) "$cpu ms"
 Check 'idle gui thread under 60 switches/s' ($sw -lt 60) "$sw/s"
 
 $since = Get-Date
-$h = RunHarness (Join-Path $Root 'fonttest.qml') @{ IIW_FONTTEST_FAMILY = 'Bahnschrift'; IIW_FONTTEST_COUNT = '600' } 14
+$h = RunHarness (Join-Path $Root 'fonttest.qml') @{ UNYX_FONTTEST_FAMILY = 'Bahnschrift'; UNYX_FONTTEST_COUNT = '600' } 14
 $hlog = NewestLogOf $since
 Stop-Process -Id $h.Id -Force -ErrorAction SilentlyContinue
 $fontFails = if ($hlog) { @(Get-Content $hlog | Select-String -SimpleMatch 'Failed to create FreeType').Count } else { -1 }
@@ -143,21 +143,21 @@ if ($hlog) { Remove-Item -Recurse -Force (Split-Path $hlog) -ErrorAction Silentl
 $fonts = Join-Path $Root 'inherit\fonts'
 New-Item -ItemType Directory -Force $fonts | Out-Null
 Copy-Item -Force (Join-Path $inst 'fonts\SpaceGrotesk-Regular.otf') (Join-Path $fonts 'test.ttf')
-$h = RunHarness (Join-Path $Root 'inherit.qml') @{ IIW_INHERIT_CMD = '["ping","-n","30","127.0.0.1"]' } 7
+$h = RunHarness (Join-Path $Root 'inherit.qml') @{ UNYX_INHERIT_CMD = '["ping","-n","30","127.0.0.1"]' } 7
 Stop-Process -Id $h.Id -Force -ErrorAction SilentlyContinue; Start-Sleep 2
 $err = TryRename $fonts
 Check 'children of ii do not keep its files open' ($err -eq '') $err
 Get-Process PING -ErrorAction SilentlyContinue | Stop-Process -Force
 
-$setup = Join-Path $Root 'ii-windows-setup.exe'
+$setup = Join-Path $Root 'unyxedshell-setup.exe'
 if (Test-Path $setup) {
     $cmd = ConvertTo-Json -Compress @($setup, '--update', '--no-self-update')
-    $h = RunHarness (Join-Path $Root 'inherit.qml') @{ IIW_INHERIT_CMD = $cmd } 9
+    $h = RunHarness (Join-Path $Root 'inherit.qml') @{ UNYX_INHERIT_CMD = $cmd } 9
     Stop-Process -Id $h.Id -Force -ErrorAction SilentlyContinue; Start-Sleep 2
     $err = TryRename $fonts
-    $open = @(Get-Process ii-windows-setup -ErrorAction SilentlyContinue).Count
+    $open = @(Get-Process unyxedshell-setup -ErrorAction SilentlyContinue).Count
     Check 'setup opened for an update holds nothing of ii' (($err -eq '') -and ($open -gt 0)) $(if ($open -eq 0) { 'setup not running' } else { $err })
-    Get-Process ii-windows-setup -ErrorAction SilentlyContinue | Stop-Process -Force
+    Get-Process unyxedshell-setup -ErrorAction SilentlyContinue | Stop-Process -Force
 }
 
 $shell = ShellProcess
@@ -190,7 +190,7 @@ Check 'problem report zip' ($zipOk -and ($entries -contains 'system-info.txt') -
 Check 'problem report has the running shell log' ($latestHead -match 'Launching config: .*shell\.qml') $latestHead
 Check 'problem report leaves crash dumps out unless asked' (@($entries | Where-Object { $_ -like '*.dmp' }).Count -eq 0)
 
-$clip = Join-Path $env:TEMP 'iiw-smoke-clip.ps1'
+$clip = Join-Path $env:TEMP 'unyx-smoke-clip.ps1'
 [IO.File]::WriteAllText($clip, "Add-Type -AssemblyName System.Windows.Forms; [Windows.Forms.Clipboard]::SetText(('smoke ' * 20000)); Start-Sleep -Milliseconds 300; [Windows.Forms.Clipboard]::SetText('smoke small')")
 $before = Get-Date
 Start-Process powershell.exe -ArgumentList '-NoProfile', '-STA', '-WindowStyle', 'Hidden', '-File', $clip -Wait

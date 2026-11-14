@@ -1,5 +1,5 @@
 {
-  "about": ["Rules for tools/testconfigs/blur (a user file in %LOCALAPPDATA%\\illogical-impulse\\layerrules.json would win over this one)."],
+  "about": ["Rules for tools/testconfigs/blur (a user file in %LOCALAPPDATA%\\unyxedshell-config\\layerrules.json would win over this one)."],
   "rules": [
     {"namespace": "blurtest.*", "blur": true, "ignoreAlpha": 0.5},
     {"namespace": "blurtest-whole", "ignoreAlpha": null},

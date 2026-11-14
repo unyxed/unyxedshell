@@ -4,9 +4,9 @@ set -euo pipefail
 VDA_COMMIT="${VDA_COMMIT:-ceb648849dcc5760a7f4ed223308ffe3de0b51c6}"
 TARGET="${TARGET:-x86_64-pc-windows-msvc}"
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-IIW="$(cd "$HERE/../.." && pwd)"
+UNYX="$(cd "$HERE/../.." && pwd)"
 
-SRC="$IIW/build/vda-src"
+SRC="$UNYX/build/vda-src"
 if [ ! -d "$SRC/.git" ]; then
 	git init -q "$SRC"
 fi
@@ -17,7 +17,7 @@ cd "$SRC"
 if [ -n "${NATIVE:-}" ]; then
 	cargo build --release -p dll --target "$TARGET" -j "${JOBS:-4}"
 else
-	export XWIN_CACHE_DIR="${XWIN_CACHE_DIR:-$IIW/toolchain/xwin-cache}"
+	export XWIN_CACHE_DIR="${XWIN_CACHE_DIR:-$UNYX/toolchain/xwin-cache}"
 	cargo xwin build --release -p dll --target "$TARGET" -j "${JOBS:-4}"
 fi
 
@@ -27,7 +27,7 @@ cp "$SRC/LICENSE.txt" "$HERE/bin/LICENSE.txt"
 cat > "$HERE/bin/SOURCE.txt" <<TXT
 VirtualDesktopAccessor.dll ($TARGET): built from source, MIT (see LICENSE.txt).
 VirtualDesktopAccessor: https://github.com/Ciantic/VirtualDesktopAccessor (commit $VDA_COMMIT)
-The GitHub release for this project only ships an x64 build, so ii-windows builds
+The GitHub release for this project only ships an x64 build, so unyxedshell builds
 the dll crate from source for architectures without a prebuilt release asset.
 TXT
 echo "built $HERE/bin/VirtualDesktopAccessor.dll ($TARGET)"

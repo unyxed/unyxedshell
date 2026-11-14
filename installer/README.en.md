@@ -2,7 +2,7 @@
 
 **illogical-impulse** (ii) is end-4's desktop shell for Hyprland on Linux: a bar, sidebars, an
 overview, a launcher, notifications and Material You colors taken from your wallpaper.
-**ii-windows** is an unofficial port of it to Windows 10 and 11, running on a Windows build of
+**unyxedshell** is an unofficial port of it to Windows 10 and 11, running on a Windows build of
 Quickshell. It is experimental: expect rough edges.
 
 This page lists what this setup changes on your computer and what ii changes while it runs.
@@ -11,7 +11,7 @@ except for the optional PowerShell 7.
 
 ## What gets installed, and where
 
-- **The program** goes to `%LOCALAPPDATA%\ii-windows` (about 195 MB): Quickshell (`qs.exe`,
+- **The program** goes to `%LOCALAPPDATA%\unyxedshell` (about 195 MB): Quickshell (`qs.exe`,
   `qsw.exe`), the Qt libraries, the fonts and icons ii uses, `matugen.exe` (makes the color
   palette from your wallpaper), `VirtualDesktopAccessor.dll` (two builds: one for Windows 11,
   one for Windows 10 in `win10`) and the Microsoft Visual C++ runtime DLLs the program needs
@@ -21,9 +21,9 @@ except for the optional PowerShell 7.
   `licenses`. A copy of this setup is kept
   there too, plus `install-manifest.json` (the record of everything this setup changed, used to
   undo it) and `setup.log`.
-- **ii's own files** go to `%LOCALAPPDATA%\quickshell\ii`. They are replaced on every install,
+- **ii's own files** go to `%LOCALAPPDATA%\quickshell\unyxedshell`. They are replaced on every install,
   update and repair, so don't edit them.
-- **Your settings** live in `%LOCALAPPDATA%\illogical-impulse` (`config.json` and friends). ii
+- **Your settings** live in `%LOCALAPPDATA%\unyxedshell-config` (`config.json` and friends). ii
   creates them as you change things; install and update never touch them.
 - **ii's state and cache** (current colors, to-do list, notification history, logs, crash
   reports) go to `%LOCALAPPDATA%\quickshell` (`State`, `cache`, `run`), wallpaper thumbnails and
@@ -31,14 +31,14 @@ except for the optional PowerShell 7.
   temporary files to `%TEMP%\quickshell`. A default color palette is put in place if there is
   none yet.
 - **Start menu:** "unyxedshell" (starts the shell) and "unyxedshell Settings".
-- **Apps & features:** an entry called "illogical-impulse (ii-windows)". *Modify* opens this
+- **Apps & features:** an entry called "unyxedshell". *Modify* opens this
   setup (update, repair, uninstall) and *Uninstall* opens it on the uninstall page.
 - **The download:** the package comes from the latest release of
   [nunreasonable/ii-windows](https://github.com/nunreasonable/ii-windows) on GitHub and is
   checked against its published SHA-256 checksum before anything is installed.
 
 Before the first install, the setup also writes down how Windows looks now, so uninstall can put
-it back: your wallpaper (a copy of the picture is kept in `%LOCALAPPDATA%\ii-windows\restore`),
+it back: your wallpaper (a copy of the picture is kept in `%LOCALAPPDATA%\unyxedshell\restore`),
 light or dark mode, the accent color and whether the taskbar hides automatically.
 
 ## The options
@@ -49,19 +49,19 @@ light or dark mode, the accent color and whether the taskbar hides automatically
   They all have the same features and options; the choice sets a few bar and sidebar defaults
   (workspace numbers or app icons, which buttons the bar shows, the quick sliders) and which
   settings window layout opens. Each card has a picture of how it looks. The setup only writes
-  `appearance.visualStyle` into `%LOCALAPPDATA%\illogical-impulse\config.json` (creating the file
+  `appearance.visualStyle` into `%LOCALAPPDATA%\unyxedshell-config\config.json` (creating the file
   if it doesn't exist yet and the choice isn't the default); ii applies the rest the next time it
   starts. You can switch any time in Settings > Quick > Style. Update shows the same choice,
   preselected with the style you have now.
 - **Start with Windows** (on by default): starts ii when you sign in, in one of two ways (only
   one of them is there at a time, and ii's Settings > System > Autostart has the same choice):
   - *Scheduled task (starts sooner)*, the default: a task in the Task Scheduler Library called
-    `illogical-impulse-<your account's SID>`, made for your user without administrator
+    `unyxedshell-<your account's SID>`, made for your user without administrator
     permission, that starts ii a second or two after you sign in. Task Manager's Startup tab
     doesn't list scheduled tasks: turn it off in ii's Settings, or here. If Windows doesn't let
     the setup create the task (a policy, for example), it uses the registry entry below instead
     and says so.
-  - *Startup registry entry*: `illogical-impulse` in the "Run" list of your user
+  - *Startup registry entry*: `unyxedshell` in the "Run" list of your user
     (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`), which Windows starts with the other
     startup apps, about 15 seconds after you sign in. Earlier versions always used this.
 - **Terminal setup** (on by default), the Windows version of ii's terminal look:
@@ -83,12 +83,12 @@ light or dark mode, the accent color and whether the taskbar hides automatically
     backup before it's edited, and the block does nothing once ii is gone:
 
     ```
-    # >>> illogical-impulse >>>
-    # Loads illogical-impulse's terminal setup (prompt, colors, aliases). Remove this block, markers
+    # >>> unyxedshell >>>
+    # Loads unyxedshell's terminal setup (prompt, colors, aliases). Remove this block, markers
     # included, to turn it off; the ii installer removes it on uninstall.
-    $IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\ii\defaults\windows\terminal\profile.ps1'
+    $IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\unyxedshell\defaults\windows\terminal\profile.ps1'
     if (Test-Path -LiteralPath $IiProfile) { . $IiProfile }
-    # <<< illogical-impulse <<<
+    # <<< unyxedshell <<<
     ```
 
     In the classic console (Windows PowerShell opened without Windows Terminal), the profile also
@@ -121,7 +121,7 @@ light or dark mode, the accent color and whether the taskbar hides automatically
   alone opens ii's Spotlight search instead of the Start menu (Settings > Services > Search can
   switch back to ii's original overview), and Win+Tab, Win+V, Win+A, Win+N,
   Win+1...0, Win+Q (closes the active window) and Win+D (maximizes) do ii things. Win+/ shows
-  them all; you can change them in `%LOCALAPPDATA%\illogical-impulse\keybinds.json`. Holding
+  them all; you can change them in `%LOCALAPPDATA%\unyxedshell-config\keybinds.json`. Holding
   the Windows key, a left drag moves the window under the pointer and a right drag resizes it
   (Settings > Interface > Windows tiling can turn this off); that click doesn't reach the app.
   All of this stops when ii closes. While a window of an app running as administrator has the
@@ -151,7 +151,7 @@ light or dark mode, the accent color and whether the taskbar hides automatically
   takes its colors from it.
 - **Windows Terminal:** ii writes a color scheme matching its theme, plus font, cursor,
   padding and transparency settings for the PowerShell and Command Prompt profiles, as a Windows Terminal
-  *fragment* in `%LOCALAPPDATA%\Microsoft\Windows Terminal\Fragments\illogical-impulse`. It does
+  *fragment* in `%LOCALAPPDATA%\Microsoft\Windows Terminal\Fragments\unyxedshell`. It does
   not edit Windows Terminal's `settings.json`; it only updates that file's date so open windows
   reload. Turning off terminal theming in ii's settings removes the fragment.
 - **Clipboard:** ii keeps a history of what you copy (up to 200 items), opened with Win+V instead
@@ -181,7 +181,7 @@ light or dark mode, the accent color and whether the taskbar hides automatically
   (or the microphone, if you choose it) and sends an audio fingerprint to Shazam's servers to
   identify the song, like SongRec does on Linux.
 - **API keys:** if you save an API key in ii's AI panel, it is kept in Windows Credential
-  Manager, in a credential called `illogical-impulse`.
+  Manager, in a credential called `unyxedshell`.
 - **Notifications:** ii reads the notifications Windows shows (through the notification access
   Windows gives apps) to show them in its own panel. Windows keeps showing its own banners too.
 - **Virtual desktops:** ii's workspaces are Windows virtual desktops. Going to a workspace that
@@ -213,13 +213,13 @@ Uninstall reads `install-manifest.json` and undoes what it lists:
   PowerShell 7 and FFmpeg too, each as its own option, if this setup installed them), then
   removes winget itself (`Remove-AppxPackage`) if this setup installed it on Windows 10, and
   removes the fonts it installed;
-- deletes the Windows Terminal fragment folder, `%LOCALAPPDATA%\ii-windows`, ii's folders in
+- deletes the Windows Terminal fragment folder, `%LOCALAPPDATA%\unyxedshell`, ii's folders in
   `%LOCALAPPDATA%\quickshell` (`ii`, `State`, `cache`, `run`, but not `State\user`),
   `%LOCALAPPDATA%\cache\quickshell` and `%TEMP%\quickshell`, plus
   `%LOCALAPPDATA%\cache\thumbnails` if that folder wasn't there before the install;
-- keeps your settings and presets in `%LOCALAPPDATA%\illogical-impulse` (with the backups from
+- keeps your settings and presets in `%LOCALAPPDATA%\unyxedshell-config` (with the backups from
   repairs), your notes, to-dos and AI chats in `%LOCALAPPDATA%\quickshell\State\user` and the
-  `illogical-impulse` credential (the API keys), so a later install picks them up. Turn on *Also
+  `unyxedshell` credential (the API keys), so a later install picks them up. Turn on *Also
   delete my settings and data* to delete those too; the button then says *Uninstall and delete
   data*;
 - puts back the wallpaper, light/dark mode, accent color and taskbar auto-hide recorded before
@@ -234,8 +234,8 @@ installing stay installed.
 ## Repair and update
 
 **Repair** brings ii back to a basic stock configuration. It moves your settings
-(`%LOCALAPPDATA%\illogical-impulse\*.json`) to a dated backup folder,
-`%LOCALAPPDATA%\illogical-impulse\backups\repair-<date>`, so ii starts with its defaults. Then it
+(`%LOCALAPPDATA%\unyxedshell-config\*.json`) to a dated backup folder,
+`%LOCALAPPDATA%\unyxedshell-config\backups\repair-<date>`, so ii starts with its defaults. Then it
 reinstalls the program files of the installed version (downloading them if needed), resets the
 color palette to the default one, clears Quickshell's QML cache, applies the options you
 installed with again, and restarts ii. How ii starts with Windows stays as it is now, including a
@@ -261,8 +261,8 @@ versions before the scheduled task did) moves to the scheduled task.
   setup downloads, the buttons wait, and if that fails it carries on with itself. A package sitting
   next to the setup that is older than the latest release is skipped for the newer one. Without
   network it carries on with what it has.
-- The setup's log is `%LOCALAPPDATA%\ii-windows\setup.log`. While it runs, the setup keeps its
-  temporary files (the download, its window's browser data) in `%TEMP%\ii-windows-setup-...`
+- The setup's log is `%LOCALAPPDATA%\unyxedshell\setup.log`. While it runs, the setup keeps its
+  temporary files (the download, its window's browser data) in `%TEMP%\unyxedshell-setup-...`
   and deletes them a few seconds after it closes.
 - The options page checks that your Documents, Desktop, Pictures and Videos folders can actually
   be opened, not just that Windows reports a path for them. If one of them was redirected into
@@ -272,7 +272,7 @@ versions before the scheduled task did) moves to the scheduled task.
 
 ## Windows 10
 
-ii-windows also installs on Windows 10 version 2004 or newer (build 19041; 22H2, build 19045,
+unyxedshell also installs on Windows 10 version 2004 or newer (build 19041; 22H2, build 19045,
 recommended), next to Windows 11. A few things work differently there:
 
 - Below build 19041, the setup refuses to install: a check on the options page blocks it with a
@@ -318,7 +318,7 @@ ii itself also differs a little on Windows 10:
 
 ## Source code and licenses
 
-- ii-windows (packaging and this setup):
+- unyxedshell (packaging and this setup):
   [github.com/nunreasonable/ii-windows](https://github.com/nunreasonable/ii-windows)
 - Quickshell for Windows, branch `windows`:
   [github.com/nunreasonable/quickshell](https://github.com/nunreasonable/quickshell). Quickshell

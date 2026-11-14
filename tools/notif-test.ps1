@@ -1,7 +1,7 @@
-$dir = if ($env:NOTIF_QS_DIR) { $env:NOTIF_QS_DIR } else { "$env:IIW_ROOT\ii-windows" }
+$dir = if ($env:NOTIF_QS_DIR) { $env:NOTIF_QS_DIR } else { "$env:UNYX_ROOT\unyxedshell" }
 $cfg = if ($env:NOTIF_TEST_CONFIG) { $env:NOTIF_TEST_CONFIG } else { "$dir\testconfigs\notifications" }
-$probe = "$env:IIW_ROOT\notif-probe\notif-probe.exe"
-$out = "$env:IIW_ROOT\logs\notif-test.out"; $err = "$env:IIW_ROOT\logs\notif-test.err"
+$probe = "$env:UNYX_ROOT\notif-probe\notif-probe.exe"
+$out = "$env:UNYX_ROOT\logs\notif-test.out"; $err = "$env:UNYX_ROOT\logs\notif-test.err"
 
 "--- listener"
 & $probe status 2>&1
@@ -10,7 +10,7 @@ $out = "$env:IIW_ROOT\logs\notif-test.out"; $err = "$env:IIW_ROOT\logs\notif-tes
 & $probe list 2>&1 | Select-String '^- id'
 
 Add-Type -AssemblyName System.Drawing
-$png = "$env:IIW_ROOT\logs\notif-test-icon.png"
+$png = "$env:UNYX_ROOT\logs\notif-test-icon.png"
 $bmp = New-Object System.Drawing.Bitmap 32, 32
 [System.Drawing.Graphics]::FromImage($bmp).Clear([System.Drawing.Color]::Orange)
 $bmp.Save($png, [System.Drawing.Imaging.ImageFormat]::Png)
@@ -37,11 +37,11 @@ function Show-Toast($aumid, $title, $body) {
 $ps = '{1AC14E77-02E7-4E5D-B744-2EB1AE5198B7}\WindowsPowerShell\v1.0\powershell.exe'
 
 Start-Sleep 7
-Show-Toast $ps 'ii-windows probe A' 'dismissed by the test config, line &lt;2&gt;'
+Show-Toast $ps 'unyxedshell probe A' 'dismissed by the test config, line &lt;2&gt;'
 Start-Sleep 2
-Show-Toast 'Microsoft.WindowsCalculator_8wekyb3d8bbwe!App' 'ii-windows probe C' 'packaged sender'
+Show-Toast 'Microsoft.WindowsCalculator_8wekyb3d8bbwe!App' 'unyxedshell probe C' 'packaged sender'
 Start-Sleep 4
-Show-Toast $ps 'ii-windows keep B' 'removed from the Windows side by the probe'
+Show-Toast $ps 'unyxedshell keep B' 'removed from the Windows side by the probe'
 Start-Sleep 4
 
 "--- toasts mid-test (A and C should be gone already)"

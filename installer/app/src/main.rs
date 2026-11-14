@@ -4,18 +4,18 @@ use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex};
 
-use iiw_setup_core::arch::{self, Arch};
-use iiw_setup_core::log::Log;
-use iiw_setup_core::manifest::{Manifest, Options};
-use iiw_setup_core::ops::{self, Action, Ctx, Preflight, RunOptions, Source};
-use iiw_setup_core::paths::Paths;
-use iiw_setup_core::progress::{Event, Msg, Reporter};
-use iiw_setup_core::{package, readme, release, version, win, SETUP_EXE};
+use unyxedshell_setup_core::arch::{self, Arch};
+use unyxedshell_setup_core::log::Log;
+use unyxedshell_setup_core::manifest::{Manifest, Options};
+use unyxedshell_setup_core::ops::{self, Action, Ctx, Preflight, RunOptions, Source};
+use unyxedshell_setup_core::paths::Paths;
+use unyxedshell_setup_core::progress::{Event, Msg, Reporter};
+use unyxedshell_setup_core::{package, readme, release, version, win, SETUP_EXE};
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, RunEvent, WebviewUrl, WebviewWindowBuilder, WindowEvent};
 
-const SETUP_VERSION: &str = env!("IIW_SETUP_VERSION");
-const RELEASE_NAME: &str = env!("IIW_RELEASE_NAME");
+const SETUP_VERSION: &str = env!("UNYX_SETUP_VERSION");
+const RELEASE_NAME: &str = env!("UNYX_RELEASE_NAME");
 const README_EN: &str = include_str!("../../README.en.md");
 const README_PT: &str = include_str!("../../README.pt-BR.md");
 const EVENT: &str = "setup-event";
@@ -67,7 +67,7 @@ fn parse_args() -> Args {
 
 fn new_session_dir(paths: &Paths) -> PathBuf {
 	let nanos = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap_or_default().subsec_nanos();
-	paths.temp.join(format!("ii-windows-setup-{}-{:x}", std::process::id(), nanos))
+	paths.temp.join(format!("unyxedshell-setup-{}-{:x}", std::process::id(), nanos))
 }
 
 fn relaunch_from_temp(exe: &Path, paths: &Paths) -> bool {
@@ -171,10 +171,10 @@ fn info(state: tauri::State<'_, AppState>) -> Info {
 			.winget
 			.iter()
 			.map(|w| w.id.clone())
-			.filter(|id| id != iiw_setup_core::PWSH_WINGET_ID && id != iiw_setup_core::FFMPEG_WINGET_ID)
+			.filter(|id| id != unyxedshell_setup_core::PWSH_WINGET_ID && id != unyxedshell_setup_core::FFMPEG_WINGET_ID)
 			.collect(),
-		pwsh7_ours: m.has_winget(iiw_setup_core::PWSH_WINGET_ID),
-		ffmpeg_ours: m.has_winget(iiw_setup_core::FFMPEG_WINGET_ID),
+		pwsh7_ours: m.has_winget(unyxedshell_setup_core::PWSH_WINGET_ID),
+		ffmpeg_ours: m.has_winget(unyxedshell_setup_core::FFMPEG_WINGET_ID),
 		fonts: m.items.fonts.len(),
 		profiles: m.items.profiles.iter().map(|p| p.path.display().to_string()).collect(),
 		exec_policy_changed: m.items.exec_policy.as_ref().is_some_and(|c| c.changed),
@@ -214,7 +214,7 @@ fn info(state: tauri::State<'_, AppState>) -> Info {
 		user_data_dir: p.user_state().display().to_string(),
 		settings_exist: p.settings.exists(),
 		defender_folders: p.defender_folders().iter().map(|d| d.display().to_string()).collect(),
-		current_style: iiw_setup_core::style::read(&p.settings.join(iiw_setup_core::style::CONFIG_FILE)),
+		current_style: unyxedshell_setup_core::style::read(&p.settings.join(unyxedshell_setup_core::style::CONFIG_FILE)),
 	}
 }
 
@@ -513,7 +513,7 @@ fn main() {
 		win::wait_exit(pid, std::time::Duration::from_secs(15));
 	}
 
-	let _instance = match win::single_instance("Local\\ii-windows-setup") {
+	let _instance = match win::single_instance("Local\\unyxedshell-setup") {
 		Some(h) => h,
 		None => {
 			win::message_box("unyxedshell Setup", "The setup is already running.");

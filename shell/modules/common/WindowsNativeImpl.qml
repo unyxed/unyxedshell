@@ -5,7 +5,7 @@ import QtQml
 QtObject {
     id: root
 
-    readonly property string process: Quickshell.env("IIW_PROCESS") ?? ""
+    readonly property string process: Quickshell.env("UNYX_PROCESS") ?? ""
     readonly property bool full: !root.process || root.process === "shell"
 
     readonly property QtObject session: QSWin.Session

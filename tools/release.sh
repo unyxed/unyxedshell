@@ -2,13 +2,13 @@
 set -euo pipefail
 . "$(dirname "$0")/env.sh"
 
-VERSION="$(tr -d '[:space:]' < "$IIW/VERSION")"
-SRC="$IIW/dist/ii-windows"
-OUT="$IIW/dist/release"
-SETUP="${SETUP_EXE:-$IIW/installer/target/x86_64-pc-windows-msvc/release/ii-windows-setup.exe}"
-[ -d "$SRC" ] || { echo "no dist/ii-windows - run tools/deploy-ii.sh first" >&2; exit 1; }
+VERSION="$(tr -d '[:space:]' < "$UNYX/VERSION")"
+SRC="$UNYX/dist/unyxedshell"
+OUT="$UNYX/dist/release"
+SETUP="${SETUP_EXE:-$UNYX/installer/target/x86_64-pc-windows-msvc/release/unyxedshell-setup.exe}"
+[ -d "$SRC" ] || { echo "no dist/unyxedshell - run tools/deploy-shell.sh first" >&2; exit 1; }
 
-CARGO_VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' "$IIW/installer/Cargo.toml" | head -n1)"
+CARGO_VERSION="$(sed -n 's/^version = "\(.*\)"/\1/p' "$UNYX/installer/Cargo.toml" | head -n1)"
 VERSION_CORE="${VERSION%%[-+]*}"
 CARGO_EXPECTED="$(echo "$VERSION_CORE" | cut -d. -f1-3)${VERSION#"$VERSION_CORE"}"
 if [ "$CARGO_VERSION" != "$VERSION" ] && [ "$CARGO_VERSION" != "$CARGO_EXPECTED" ]; then
@@ -26,11 +26,11 @@ if [ "${GITHUB_EVENT_NAME:-}" = push ] && [ "${GITHUB_REF_TYPE:-}" = tag ]; then
 fi
 
 if [ "${SKIP_SETUP_BUILD:-}" != 1 ]; then
-	(cd "$IIW/installer" && cargo xwin build --release --target x86_64-pc-windows-msvc -p ii-windows-setup)
+	(cd "$UNYX/installer" && cargo xwin build --release --target x86_64-pc-windows-msvc -p unyxedshell-setup)
 fi
 [ -f "$SETUP" ] || { echo "no $SETUP" >&2; exit 1; }
 
-STAGE="$IIW/build/release-stage"
+STAGE="$UNYX/build/release-stage"
 rm -rf "$STAGE"
 mkdir -p "$STAGE" "$OUT"
 
@@ -39,21 +39,21 @@ mkdir -p "$STAGE" "$OUT"
 		cp -a "$SRC/${entry#./}" "$STAGE/"
 	done
 printf '%s\n' "$VERSION" > "$STAGE/VERSION"
-cp -f "$SETUP" "$STAGE/ii-windows-setup.exe"
+cp -f "$SETUP" "$STAGE/unyxedshell-setup.exe"
 
 if [ "$ARCH" = x64 ]; then
-	ZIP="ii-windows-$VERSION.zip"
+	ZIP="unyxedshell-$VERSION.zip"
 else
-	ZIP="ii-windows-$VERSION-$ARCH.zip"
+	ZIP="unyxedshell-$VERSION-$ARCH.zip"
 fi
 rm -f "$OUT/$ZIP" "$OUT/$ZIP.sha256"
 if command -v zip >/dev/null; then
 	(cd "$STAGE" && zip -rqX "$OUT/$ZIP" .)
 else
-	"${PYTHON:-python3}" "$IIW/tools/zipdir.py" "$STAGE" "$OUT/$ZIP"
+	"${PYTHON:-python3}" "$UNYX/tools/zipdir.py" "$STAGE" "$OUT/$ZIP"
 fi
 (cd "$OUT" && sha256sum "$ZIP" > "$ZIP.sha256")
-cp -f "$SETUP" "$OUT/ii-windows-setup.exe"
+cp -f "$SETUP" "$OUT/unyxedshell-setup.exe"
 
 echo "release $VERSION ($ARCH) in $OUT:"
-(cd "$OUT" && ls -l "$ZIP" "$ZIP.sha256" ii-windows-setup.exe)
+(cd "$OUT" && ls -l "$ZIP" "$ZIP.sha256" unyxedshell-setup.exe)

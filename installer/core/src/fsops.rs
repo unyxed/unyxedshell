@@ -252,7 +252,7 @@ mod tests {
 	use super::*;
 
 	fn tmp(name: &str) -> PathBuf {
-		let d = std::env::temp_dir().join(format!("iiw-fs-{}-{name}", std::process::id()));
+		let d = std::env::temp_dir().join(format!("unyx-fs-{}-{name}", std::process::id()));
 		let _ = remove_any(&d);
 		std::fs::create_dir_all(&d).unwrap();
 		d
@@ -266,27 +266,27 @@ mod tests {
 	#[test]
 	fn swap_commit_and_rollback() {
 		let d = tmp("swap");
-		let target = d.join("ii-windows");
+		let target = d.join("unyxedshell");
 		write(&target.join("qsw.exe"), "old");
 		write(&target.join("stale.dll"), "old");
 		write(&target.join("install-manifest.json"), "{}");
-		write(&target.join("ii-windows-setup.exe"), "old setup");
+		write(&target.join("unyxedshell-setup.exe"), "old setup");
 		let staging = d.join("staging");
 		write(&staging.join("qsw.exe"), "new");
-		write(&staging.join("config").join("ii").join("shell.qml"), "new");
-		write(&staging.join("ii-windows-setup.exe"), "new setup");
-		let keep = ["install-manifest.json", "setup.log", "ii-windows-setup.exe"];
+		write(&staging.join("config").join("unyxedshell").join("shell.qml"), "new");
+		write(&staging.join("unyxedshell-setup.exe"), "new setup");
+		let keep = ["install-manifest.json", "setup.log", "unyxedshell-setup.exe"];
 
 		let mut swap = Swap::run(&staging, &target, &d.join("previous"), &keep).unwrap();
 		assert_eq!(std::fs::read_to_string(target.join("qsw.exe")).unwrap(), "new");
 		assert!(!target.join("stale.dll").exists());
 		assert_eq!(std::fs::read_to_string(target.join("install-manifest.json")).unwrap(), "{}");
-		assert_eq!(std::fs::read_to_string(target.join("ii-windows-setup.exe")).unwrap(), "new setup");
+		assert_eq!(std::fs::read_to_string(target.join("unyxedshell-setup.exe")).unwrap(), "new setup");
 		let problems = swap.rollback();
 		assert!(problems.is_empty(), "{problems:?}");
 		assert_eq!(std::fs::read_to_string(target.join("qsw.exe")).unwrap(), "old");
 		assert_eq!(std::fs::read_to_string(target.join("stale.dll")).unwrap(), "old");
-		assert_eq!(std::fs::read_to_string(target.join("ii-windows-setup.exe")).unwrap(), "old setup");
+		assert_eq!(std::fs::read_to_string(target.join("unyxedshell-setup.exe")).unwrap(), "old setup");
 		assert!(!target.join("config").exists());
 		assert!(staging.join("qsw.exe").exists(), "rolled-back entries go back to staging");
 
@@ -302,7 +302,7 @@ mod tests {
 	#[test]
 	fn rollback_keeps_previous_when_a_file_cant_go_back() {
 		let d = tmp("rollback-kept");
-		let target = d.join("ii-windows");
+		let target = d.join("unyxedshell");
 		let previous = d.join("previous");
 		write(&target.join("qsw.exe"), "old");
 		write(&target.join("stale").join("old.dll"), "old");
@@ -323,7 +323,7 @@ mod tests {
 	fn locked_file_during_swap_keeps_everything() {
 		use std::os::windows::fs::OpenOptionsExt;
 		let d = tmp("swap-locked");
-		let target = d.join("ii-windows");
+		let target = d.join("unyxedshell");
 		let previous = d.join("previous");
 		write(&target.join("a.txt"), "old a");
 		write(&target.join("qsw.exe"), "old");
@@ -358,7 +358,7 @@ mod tests {
 	#[test]
 	fn settings_move_out_and_come_back() {
 		let d = tmp("settings-back");
-		let settings = d.join("illogical-impulse");
+		let settings = d.join("unyxedshell-config");
 		let backup = settings.join("backups").join("repair-1");
 		write(&settings.join("config.json"), "config");
 		write(&settings.join("todo.json"), "todo");
@@ -377,7 +377,7 @@ mod tests {
 	#[test]
 	fn settings_failure_in_the_middle_puts_back_what_moved() {
 		let d = tmp("settings-middle");
-		let settings = d.join("illogical-impulse");
+		let settings = d.join("unyxedshell-config");
 		let backup = settings.join("backups").join("repair-1");
 		for name in ["a.json", "b.json", "c.json"] {
 			write(&settings.join(name), name);
@@ -396,7 +396,7 @@ mod tests {
 	#[test]
 	fn settings_copy_back_reports_a_failure() {
 		let d = tmp("settings-stuck");
-		let settings = d.join("illogical-impulse");
+		let settings = d.join("unyxedshell-config");
 		let backup = settings.join("backups").join("repair-1");
 		write(&settings.join("config.json"), "config");
 		let mut moved = Vec::new();

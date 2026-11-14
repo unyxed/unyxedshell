@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
-IIW="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-DEPS="${DEPS_DIR:-$IIW/build/deps}"
+UNYX="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+DEPS="${DEPS_DIR:-$UNYX/build/deps}"
 mkdir -p "$DEPS"
 
 while read -r dest sum url; do
@@ -17,7 +17,7 @@ while read -r dest sum url; do
 		exit 1
 	fi
 	mv "$tmp" "$out"
-done < "$IIW/tools/deps.lock"
+done < "$UNYX/tools/deps.lock"
 
 mkdir -p "$DEPS/fonts" "$DEPS/licenses/fonts"
 "${PYTHON:-python3}" - "$DEPS/archives/JetBrainsMono-nerd-3.4.0.zip" "$DEPS/fonts" "$DEPS/licenses/fonts/JetBrainsMono-OFL.txt" <<'PY'

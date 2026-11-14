@@ -664,8 +664,8 @@ void TestPanelAnimation::ruleMerging() {
 }
 
 void TestPanelAnimation::iiRules() {
-	auto path = qEnvironmentVariable("IIW_LAYER_RULES");
-	if (path.isEmpty()) QSKIP("IIW_LAYER_RULES is not set to ii's defaults/windows/layerrules.json");
+	auto path = qEnvironmentVariable("UNYX_LAYER_RULES");
+	if (path.isEmpty()) QSKIP("UNYX_LAYER_RULES is not set to ii's defaults/windows/layerrules.json");
 
 	auto file = QFile(path);
 	QVERIFY2(file.open(QFile::ReadOnly), qPrintable(path));
@@ -1721,8 +1721,8 @@ void TestPanelAnimation::shaderReflection() {
 }
 
 void TestPanelAnimation::shaderUpToDate() {
-	auto qsb = qEnvironmentVariable("IIW_QSB");
-	if (qsb.isEmpty()) QSKIP("IIW_QSB is not set to the host qsb tool");
+	auto qsb = qEnvironmentVariable("UNYX_QSB");
+	if (qsb.isEmpty()) QSKIP("UNYX_QSB is not set to the host qsb tool");
 
 	auto dir = QTemporaryDir();
 	QVERIFY(dir.isValid());

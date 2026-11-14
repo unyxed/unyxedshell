@@ -21,16 +21,16 @@ pub mod ops;
 #[cfg(windows)]
 pub mod win;
 
-pub const SETUP_EXE: &str = "ii-windows-setup.exe";
+pub const SETUP_EXE: &str = "unyxedshell-setup.exe";
 pub const MANIFEST: &str = "install-manifest.json";
 pub const LOG: &str = "setup.log";
-pub const UNINSTALL_KEY_NAME: &str = "ii-windows";
-pub const RUN_VALUE: &str = "illogical-impulse";
-pub const CREDENTIAL_TARGET: &str = "illogical-impulse";
+pub const UNINSTALL_KEY_NAME: &str = "unyxedshell";
+pub const RUN_VALUE: &str = "unyxedshell";
+pub const CREDENTIAL_TARGET: &str = "unyxedshell";
 pub const SHORTCUT_MAIN: &str = "unyxedshell.lnk";
 pub const SHORTCUT_SETTINGS: &str = "unyxedshell Settings.lnk";
 pub const DISPLAY_NAME: &str = "unyxedshell";
-pub const PUBLISHER: &str = "nunreasonable";
+pub const PUBLISHER: &str = "unyxedshell";
 
 pub const TERMINAL_TOOLS: [(&str, &str); 4] = [
 	("JanDeDobbeleer.OhMyPosh", "oh-my-posh"),

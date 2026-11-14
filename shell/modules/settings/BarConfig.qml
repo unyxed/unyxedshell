@@ -370,7 +370,7 @@ ContentPage {
                 Config.options.bar.topLeftIcon = text;
             }
             StyledToolTip {
-                text: Translation.tr("Icon shown at the bar's top left, which opens the left sidebar. Use \"distro\" for your OS logo, or the name of an icon file in ~/.config/quickshell/ii/assets/icons.")
+                text: Translation.tr("Icon shown at the bar's top left, which opens the left sidebar. Use \"distro\" for your OS logo, or the name of an icon file in ~/.config/quickshell/unyxedshell/assets/icons.")
             }
         }
 

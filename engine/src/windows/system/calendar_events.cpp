@@ -578,7 +578,7 @@ void CalendarEvents::fetch(CalendarSource& source) {
 	if (this->mNam == nullptr) this->mNam = new QNetworkAccessManager(this);
 
 	auto request = QNetworkRequest(target.url);
-	request.setHeader(QNetworkRequest::UserAgentHeader, QByteArrayLiteral("illogical-impulse calendar"));
+	request.setHeader(QNetworkRequest::UserAgentHeader, QByteArrayLiteral("unyxedshell calendar"));
 	request.setRawHeader("Accept", "text/calendar, text/plain;q=0.9, */*;q=0.8");
 	request.setAttribute(
 	    QNetworkRequest::RedirectPolicyAttribute,

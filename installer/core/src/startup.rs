@@ -1,8 +1,8 @@
 use serde::{Deserialize, Deserializer, Serialize};
 
-pub const TASK_PREFIX: &str = "illogical-impulse";
-pub const TASK_DESCRIPTION: &str = "Starts illogical-impulse (ii-windows) when you sign in.";
-pub const SHELL_ARGS: &str = "-n -c ii";
+pub const TASK_PREFIX: &str = "unyxedshell";
+pub const TASK_DESCRIPTION: &str = "Starts unyxedshell when you sign in.";
+pub const SHELL_ARGS: &str = "-n -c unyxedshell";
 
 #[derive(Debug, Clone, Copy, Default, Serialize, Deserialize, PartialEq, Eq)]
 #[serde(rename_all = "lowercase")]
@@ -169,41 +169,41 @@ mod tests {
 		assert_eq!(user_id("", "rafab", sid), "rafab");
 		assert_eq!(user_id("PC", "", sid), sid);
 		assert_eq!(user_id("", "  ", sid), sid);
-		assert_eq!(task_name(sid), "illogical-impulse-S-1-5-21-1-2-3-1001");
+		assert_eq!(task_name(sid), "unyxedshell-S-1-5-21-1-2-3-1001");
 	}
 
 	#[test]
 	fn quotes_commands() {
 		assert_eq!(
-			task_command(r"C:\Users\rafab\AppData\Local\ii-windows\qsw.exe"),
-			r"C:\Users\rafab\AppData\Local\ii-windows\qsw.exe"
+			task_command(r"C:\Users\rafab\AppData\Local\unyxedshell\qsw.exe"),
+			r"C:\Users\rafab\AppData\Local\unyxedshell\qsw.exe"
 		);
 		assert_eq!(
-			task_command(r"C:\Users\João Silva\AppData\Local\ii-windows\qsw.exe"),
-			r#""C:\Users\João Silva\AppData\Local\ii-windows\qsw.exe""#
+			task_command(r"C:\Users\João Silva\AppData\Local\unyxedshell\qsw.exe"),
+			r#""C:\Users\João Silva\AppData\Local\unyxedshell\qsw.exe""#
 		);
 		assert_eq!(task_command(r#""C:\a b\qsw.exe""#), r#""C:\a b\qsw.exe""#);
-		assert_eq!(run_command(r"C:\a b\qsw.exe"), r#""C:\a b\qsw.exe" -n -c ii"#);
-		assert_eq!(run_command(r"C:\ab\qsw.exe"), r#""C:\ab\qsw.exe" -n -c ii"#);
+		assert_eq!(run_command(r"C:\a b\qsw.exe"), r#""C:\a b\qsw.exe" -n -c unyxedshell"#);
+		assert_eq!(run_command(r"C:\ab\qsw.exe"), r#""C:\ab\qsw.exe" -n -c unyxedshell"#);
 	}
 
 	#[test]
 	fn builds_the_task() {
 		let xml = task_xml(
 			r"PC\rafab",
-			r"C:\Users\rafab\AppData\Local\ii-windows\qsw.exe",
-			r"C:\Users\rafab\AppData\Local\ii-windows",
+			r"C:\Users\rafab\AppData\Local\unyxedshell\qsw.exe",
+			r"C:\Users\rafab\AppData\Local\unyxedshell",
 		);
 		assert!(
 			xml.starts_with("<Task version=\"1.2\" xmlns=\"http://schemas.microsoft.com/windows/2004/02/mit/task\">")
 		);
 		assert!(xml.ends_with("</Task>"));
 		assert_eq!(between(&xml, "<UserId>", "</UserId>"), vec![r"PC\rafab", r"PC\rafab"]);
-		assert_eq!(between(&xml, "<Command>", "</Command>"), vec![r"C:\Users\rafab\AppData\Local\ii-windows\qsw.exe"]);
-		assert_eq!(between(&xml, "<Arguments>", "</Arguments>"), vec!["-n -c ii"]);
+		assert_eq!(between(&xml, "<Command>", "</Command>"), vec![r"C:\Users\rafab\AppData\Local\unyxedshell\qsw.exe"]);
+		assert_eq!(between(&xml, "<Arguments>", "</Arguments>"), vec!["-n -c unyxedshell"]);
 		assert_eq!(
 			between(&xml, "<WorkingDirectory>", "</WorkingDirectory>"),
-			vec![r"C:\Users\rafab\AppData\Local\ii-windows"]
+			vec![r"C:\Users\rafab\AppData\Local\unyxedshell"]
 		);
 		for part in [
 			"<LogonTrigger><Enabled>true</Enabled>",
@@ -216,7 +216,7 @@ mod tests {
 			"<Priority>4</Priority>",
 			"<Actions Context=\"Author\">",
 			"<Principal id=\"Author\">",
-			"<Description>Starts illogical-impulse (ii-windows) when you sign in.</Description>",
+			"<Description>Starts unyxedshell when you sign in.</Description>",
 		] {
 			assert!(xml.contains(part), "missing {part}");
 		}
@@ -227,13 +227,13 @@ mod tests {
 	fn escapes_paths_and_users_in_the_task() {
 		let xml = task_xml(
 			r"CORP\Tom & Jerry",
-			r"C:\Users\Tom & Jerry\AppData\Local\ii-windows\qsw.exe",
+			r"C:\Users\Tom & Jerry\AppData\Local\unyxedshell\qsw.exe",
 			r"C:\Users\Tom & Jerry\<x>",
 		);
 		assert_eq!(between(&xml, "<UserId>", "</UserId>"), vec![r"CORP\Tom &amp; Jerry", r"CORP\Tom &amp; Jerry"]);
 		assert_eq!(
 			between(&xml, "<Command>", "</Command>"),
-			vec![r"&quot;C:\Users\Tom &amp; Jerry\AppData\Local\ii-windows\qsw.exe&quot;"]
+			vec![r"&quot;C:\Users\Tom &amp; Jerry\AppData\Local\unyxedshell\qsw.exe&quot;"]
 		);
 		assert_eq!(
 			between(&xml, "<WorkingDirectory>", "</WorkingDirectory>"),
@@ -241,13 +241,13 @@ mod tests {
 		);
 		let unicode = task_xml(
 			r"MÁQUINA\Conceição",
-			r"C:\Users\Conceição\AppData\Local\ii-windows\qsw.exe",
-			r"C:\Users\Conceição\AppData\Local\ii-windows",
+			r"C:\Users\Conceição\AppData\Local\unyxedshell\qsw.exe",
+			r"C:\Users\Conceição\AppData\Local\unyxedshell",
 		);
 		assert_eq!(between(&unicode, "<UserId>", "</UserId>"), vec![r"MÁQUINA\Conceição", r"MÁQUINA\Conceição"]);
 		assert_eq!(
 			between(&unicode, "<Command>", "</Command>"),
-			vec![r"C:\Users\Conceição\AppData\Local\ii-windows\qsw.exe"]
+			vec![r"C:\Users\Conceição\AppData\Local\unyxedshell\qsw.exe"]
 		);
 		let lt = xml.matches('<').count();
 		let gt = xml.matches('>').count();

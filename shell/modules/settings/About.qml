@@ -116,7 +116,7 @@ ContentPage {
     ContentSection {
         visible: Platform.isWindows && SelfUpdate.enabled
         icon: "update"
-        title: Translation.tr("ii-windows updates")
+        title: Translation.tr("unyxedshell updates")
 
         NoticeBox {
             Layout.fillWidth: true
@@ -170,7 +170,7 @@ ContentPage {
                 : SelfUpdate.lastError !== ""
                     ? SelfUpdate.lastError
                     : SelfUpdate.installedVersion !== ""
-                        ? Translation.tr("ii-windows %1 is up to date.").arg(SelfUpdate.installedVersion)
+                        ? Translation.tr("unyxedshell %1 is up to date.").arg(SelfUpdate.installedVersion)
                         : Translation.tr("Couldn't determine the installed version.")
         }
 

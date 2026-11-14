@@ -251,7 +251,7 @@ impl<'a> Ctx<'a> {
 	fn finish(&mut self, result: R<()>, can_launch: bool) -> bool {
 		let ok = result.is_ok();
 		if self.log.path().is_none() {
-			let p = self.paths.temp.join(format!("ii-windows-setup-{}.log", log::stamp()));
+			let p = self.paths.temp.join(format!("unyxedshell-setup-{}.log", log::stamp()));
 			self.log.open(&p);
 			self.notes.push(
 				Msg::new("setup_log", format!("The log of this run is {}", p.display()))
@@ -798,8 +798,8 @@ impl ConfigSwap {
 
 fn install_config(ctx: &mut Ctx) -> R<ConfigSwap> {
 	ctx.begin("config");
-	let src = ctx.paths.install_dir.join("config").join("ii");
-	let live = ctx.paths.ii_config.clone();
+	let src = ctx.paths.install_dir.join("config").join("unyxedshell");
+	let live = ctx.paths.shell_config.clone();
 	let fresh = ctx.paths.quickshell.join("ii.new");
 	let old = ctx.paths.quickshell.join("ii.old");
 	let fail = |ctx: &Ctx, e: String| {
@@ -908,8 +908,8 @@ fn shortcuts_and_entry(ctx: &mut Ctx, m: &mut Manifest) {
 	let settings_args = format!("-n -p \"{}\"", p.settings_qml().display());
 	let mut ok = true;
 	for (lnk, args, desc) in [
-		(&main, "-n -c ii".to_string(), "unyxedshell shell"),
-		(&settings, settings_args, "unyxedshell settings"),
+		(&main, "-n -c unyxedshell".to_string(), "unyxedshell"),
+		(&settings, settings_args, "unyxedshell Settings"),
 	] {
 		match win::create_shortcut(lnk, &p.qsw_exe(), &args, &p.install_dir, &icon, desc) {
 			Ok(()) => {
@@ -1829,7 +1829,7 @@ fn launch(ctx: &mut Ctx) {
 }
 
 pub fn launch_ii(paths: &Paths) -> std::io::Result<u32> {
-	win::spawn_detached(&paths.qsw_exe(), &["-n", "-c", "ii"], &paths.install_dir)
+	win::spawn_detached(&paths.qsw_exe(), &["-n", "-c", "unyxedshell"], &paths.install_dir)
 }
 
 const LAUNCH_POLL: Duration = Duration::from_millis(500);
@@ -2027,7 +2027,7 @@ pub fn install(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 		plan.push("launch");
 	}
 	ctx.plan(&plan);
-	ctx.info(format!("ii-windows setup {} - install from {}", ctx.setup_version, source.describe()));
+	ctx.info(format!("unyxedshell setup {} - install from {}", ctx.setup_version, source.describe()));
 	ctx.info(format!("options: {opts:?}, previous: {previous_opts:?}"));
 
 	let result = (|| -> R<()> {
@@ -2081,7 +2081,7 @@ pub fn update(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 	ctx.plan(&plan);
 	ctx.log.open(&ctx.paths.log());
 	ctx.info(format!(
-		"ii-windows setup {} - update {} -> {} from {}",
+		"unyxedshell setup {} - update {} -> {} from {}",
 		ctx.setup_version,
 		m.version,
 		source.version(),
@@ -2144,7 +2144,7 @@ pub fn repair(ctx: &mut Ctx, source: &Source, run: &RunOptions) -> bool {
 	plan.extend(["finish", "launch"]);
 	ctx.plan(&plan);
 	ctx.log.open(&ctx.paths.log());
-	ctx.info(format!("ii-windows setup {} - repair {} from {}", ctx.setup_version, m.version, source.describe()));
+	ctx.info(format!("unyxedshell setup {} - repair {} from {}", ctx.setup_version, m.version, source.describe()));
 	let result = (|| -> R<()> {
 		let pkg = obtain_package(ctx, source)?;
 		stop_ii(ctx, Some(&m));
@@ -2270,10 +2270,10 @@ pub fn uninstall(ctx: &mut Ctx, run: &RunOptions) -> bool {
 	}
 	plan.extend(["ii_data", "files"]);
 	ctx.plan(&plan);
-	let log_path = ctx.paths.temp.join(format!("ii-windows-uninstall-{}.log", log::stamp()));
+	let log_path = ctx.paths.temp.join(format!("unyxedshell-uninstall-{}.log", log::stamp()));
 	ctx.log.open(&log_path);
-	ctx.info(format!("ii-windows setup {} - uninstall {} ({:?})", ctx.setup_version, m.version, run));
-	let backup_root = ctx.paths.temp.join(format!("ii-windows-uninstall-backup-{}", log::stamp()));
+	ctx.info(format!("unyxedshell setup {} - uninstall {} ({:?})", ctx.setup_version, m.version, run));
+	let backup_root = ctx.paths.temp.join(format!("unyxedshell-uninstall-backup-{}", log::stamp()));
 
 	let result = (|| -> R<()> {
 		stop_ii(ctx, Some(&m));
@@ -2687,7 +2687,7 @@ mod tests {
 	}
 
 	fn tmp(name: &str) -> PathBuf {
-		let d = std::env::temp_dir().join(format!("iiw-ops-{}-{name}", std::process::id()));
+		let d = std::env::temp_dir().join(format!("unyx-ops-{}-{name}", std::process::id()));
 		let _ = fsops::remove_any(&d);
 		std::fs::create_dir_all(&d).unwrap();
 		d

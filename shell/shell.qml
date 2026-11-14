@@ -2,7 +2,7 @@
 //@ pragma Env QS_NO_RELOAD_POPUP=1
 //@ pragma Env QT_QUICK_CONTROLS_STYLE=Basic
 //@ pragma Env QT_QUICK_FLICKABLE_WHEEL_DECELERATION=10000
-//@ pragma Env IIW_PROCESS=shell
+//@ pragma Env UNYX_PROCESS=shell
 
 // Remove two slashes below and adjust the value to change the UI scale
 ////@ pragma Env QT_SCALE_FACTOR=1
@@ -20,7 +20,7 @@ import Quickshell.Hyprland
 
 ShellRoot {
     id: root
-    settings.watchFiles: !Platform.isWindows || Quickshell.env("IIW_WATCH_FILES") === "1"
+    settings.watchFiles: !Platform.isWindows || Quickshell.env("UNYX_WATCH_FILES") === "1"
 
     // Stuff for every panel family
     ReloadPopup {}

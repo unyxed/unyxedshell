@@ -1229,7 +1229,7 @@ Singleton {
             "-H", `Authorization: Bearer ${token}`,
             "-H", "Accept: application/vnd.github+json",
             "-H", "X-GitHub-Api-Version: 2022-11-28",
-            "-H", "User-Agent: ii-windows-presets",
+            "-H", "User-Agent: unyxedshell-presets",
             "https://api.github.com/user"];
         verifyTokenProc.token = token;
         verifyTokenProc.running = true;
@@ -1369,7 +1369,7 @@ Singleton {
             "-H", `Authorization: Bearer ${root._ghToken}`,
             "-H", "Accept: application/vnd.github+json",
             "-H", "X-GitHub-Api-Version: 2022-11-28",
-            "-H", "User-Agent: ii-windows-presets"];
+            "-H", "User-Agent: unyxedshell-presets"];
         if (bodyObj !== null)
             args.push("-H", "Content-Type: application/json", "--data-binary", "@-");
         args.push(url);

@@ -43,7 +43,7 @@ impl std::fmt::Display for Error {
 			Error::NotFound => write!(f, "no release found on GitHub ({REPO})"),
 			Error::Network(e) => write!(f, "network error: {e}"),
 			Error::NoPackage(tag) => {
-				write!(f, "release {tag} has no ii-windows-<version>.zip with a .sha256 next to it")
+				write!(f, "release {tag} has no unyxedshell-<version>.zip with a .sha256 next to it")
 			}
 			Error::Integrity(e) => write!(f, "{e}"),
 			Error::Io(e) => write!(f, "{e}"),
@@ -63,7 +63,7 @@ fn agent() -> ureq::Agent {
 		.timeout_connect(Some(Duration::from_secs(15)))
 		.timeout_recv_response(Some(Duration::from_secs(30)))
 		.timeout_recv_body(Some(Duration::from_secs(120)))
-		.user_agent(concat!("ii-windows-setup/", env!("CARGO_PKG_VERSION")))
+		.user_agent(concat!("unyxedshell-setup/", env!("CARGO_PKG_VERSION")))
 		.http_status_as_error(false)
 		.build()
 		.into()
@@ -139,7 +139,7 @@ pub fn parse_release(json: &serde_json::Value, wanted_arch: Arch) -> Result<Rele
 	})
 }
 
-pub const RELEASE_JSON_ENV: &str = "IIW_SETUP_RELEASE_JSON";
+pub const RELEASE_JSON_ENV: &str = "UNYX_SETUP_RELEASE_JSON";
 
 fn override_release(arch: Arch) -> Option<Result<ReleaseInfo, Error>> {
 	let url = std::env::var(RELEASE_JSON_ENV).ok().filter(|u| !u.trim().is_empty())?;
@@ -173,7 +173,7 @@ pub fn for_version(ver: &str, arch: Arch) -> Result<ReleaseInfo, Error> {
 	Err(last)
 }
 
-pub const STABLE_RELEASE_JSON_ENV: &str = "IIW_SETUP_STABLE_RELEASE_JSON";
+pub const STABLE_RELEASE_JSON_ENV: &str = "UNYX_SETUP_STABLE_RELEASE_JSON";
 
 pub fn latest_stable(arch: Arch) -> Result<ReleaseInfo, Error> {
 	if let Some(url) = std::env::var(STABLE_RELEASE_JSON_ENV).ok().filter(|u| !u.trim().is_empty()) {
@@ -338,9 +338,9 @@ mod tests {
 			"tag_name": "v0.2.0", "html_url": "https://github.com/x/y/releases/tag/v0.2.0",
 			"published_at": "2026-10-02T00:00:00Z",
 			"assets": [
-				{"name": "ii-windows-setup.exe", "size": 7000000, "browser_download_url": "https://e/setup"},
-				{"name": "ii-windows-0.2.0.zip", "size": 100000000, "browser_download_url": "https://e/zip"},
-				{"name": "ii-windows-0.2.0.zip.sha256", "size": 90, "browser_download_url": "https://e/sha"}
+				{"name": "unyxedshell-setup.exe", "size": 7000000, "browser_download_url": "https://e/setup"},
+				{"name": "unyxedshell-0.2.0.zip", "size": 100000000, "browser_download_url": "https://e/zip"},
+				{"name": "unyxedshell-0.2.0.zip.sha256", "size": 90, "browser_download_url": "https://e/sha"}
 			]}"#,
 		)
 		.unwrap();
@@ -352,7 +352,7 @@ mod tests {
 
 		let no_sha: serde_json::Value = serde_json::from_str(
 			r#"{"tag_name": "v0.2.0", "assets": [
-			{"name": "ii-windows-0.2.0.zip", "browser_download_url": "https://e/zip"}]}"#,
+			{"name": "unyxedshell-0.2.0.zip", "browser_download_url": "https://e/zip"}]}"#,
 		)
 		.unwrap();
 		assert!(matches!(parse_release(&no_sha, Arch::X64), Err(Error::NoPackage(_))));
@@ -367,26 +367,26 @@ mod tests {
 	}
 
 	const BOTH: [&str; 5] = [
-		"ii-windows-setup.exe",
-		"ii-windows-26.1.2.0.zip",
-		"ii-windows-26.1.2.0.zip.sha256",
-		"ii-windows-26.1.2.0-arm64.zip",
-		"ii-windows-26.1.2.0-arm64.zip.sha256",
+		"unyxedshell-setup.exe",
+		"unyxedshell-26.1.2.0.zip",
+		"unyxedshell-26.1.2.0.zip.sha256",
+		"unyxedshell-26.1.2.0-arm64.zip",
+		"unyxedshell-26.1.2.0-arm64.zip.sha256",
 	];
 
 	#[test]
 	fn x64_takes_the_plain_zip() {
 		let r = parse_release(&release(&BOTH), Arch::X64).unwrap();
-		assert_eq!(r.zip_name, "ii-windows-26.1.2.0.zip");
-		assert_eq!(r.sha_url, "https://e/ii-windows-26.1.2.0.zip.sha256");
+		assert_eq!(r.zip_name, "unyxedshell-26.1.2.0.zip");
+		assert_eq!(r.sha_url, "https://e/unyxedshell-26.1.2.0.zip.sha256");
 		assert_eq!(r.version, "26.1.2.0");
 		assert_eq!((r.arch, r.wanted_arch), (Arch::X64, Arch::X64));
-		assert_eq!(r.setup_url, "https://e/ii-windows-setup.exe");
+		assert_eq!(r.setup_url, "https://e/unyxedshell-setup.exe");
 
 		let reversed: Vec<&str> = BOTH.iter().rev().copied().collect();
-		assert_eq!(parse_release(&release(&reversed), Arch::X64).unwrap().zip_name, "ii-windows-26.1.2.0.zip");
+		assert_eq!(parse_release(&release(&reversed), Arch::X64).unwrap().zip_name, "unyxedshell-26.1.2.0.zip");
 
-		let only_arm = release(&["ii-windows-26.1.2.0-arm64.zip", "ii-windows-26.1.2.0-arm64.zip.sha256"]);
+		let only_arm = release(&["unyxedshell-26.1.2.0-arm64.zip", "unyxedshell-26.1.2.0-arm64.zip.sha256"]);
 		assert!(
 			matches!(parse_release(&only_arm, Arch::X64), Err(Error::NoPackage(_))),
 			"x64 never takes the arm64 zip"
@@ -396,26 +396,26 @@ mod tests {
 	#[test]
 	fn arm64_takes_the_arm64_zip() {
 		let r = parse_release(&release(&BOTH), Arch::Arm64).unwrap();
-		assert_eq!(r.zip_name, "ii-windows-26.1.2.0-arm64.zip");
-		assert_eq!(r.zip_url, "https://e/ii-windows-26.1.2.0-arm64.zip");
-		assert_eq!(r.sha_url, "https://e/ii-windows-26.1.2.0-arm64.zip.sha256");
+		assert_eq!(r.zip_name, "unyxedshell-26.1.2.0-arm64.zip");
+		assert_eq!(r.zip_url, "https://e/unyxedshell-26.1.2.0-arm64.zip");
+		assert_eq!(r.sha_url, "https://e/unyxedshell-26.1.2.0-arm64.zip.sha256");
 		assert_eq!(r.version, "26.1.2.0");
 		assert_eq!((r.arch, r.wanted_arch), (Arch::Arm64, Arch::Arm64));
-		assert_eq!(r.setup_url, "https://e/ii-windows-setup.exe");
+		assert_eq!(r.setup_url, "https://e/unyxedshell-setup.exe");
 
 		let renamed = release(&[
-			"ii-windows-26.1.2.0.zip",
-			"ii-windows-26.1.2.0.zip.sha256",
-			"ii-windows-26.1.2.0-fix1-arm64.zip",
-			"ii-windows-26.1.2.0-fix1-arm64.zip.sha256",
+			"unyxedshell-26.1.2.0.zip",
+			"unyxedshell-26.1.2.0.zip.sha256",
+			"unyxedshell-26.1.2.0-fix1-arm64.zip",
+			"unyxedshell-26.1.2.0-fix1-arm64.zip.sha256",
 		]);
-		assert_eq!(parse_release(&renamed, Arch::Arm64).unwrap().zip_name, "ii-windows-26.1.2.0-fix1-arm64.zip");
+		assert_eq!(parse_release(&renamed, Arch::Arm64).unwrap().zip_name, "unyxedshell-26.1.2.0-fix1-arm64.zip");
 	}
 
 	#[test]
 	fn selected_zip_version_drives_updates() {
 		let hotfix = parse_release(
-			&release(&["ii-windows-26.1.2.0-fix1.zip", "ii-windows-26.1.2.0-fix1.zip.sha256"]),
+			&release(&["unyxedshell-26.1.2.0-fix1.zip", "unyxedshell-26.1.2.0-fix1.zip.sha256"]),
 			Arch::X64,
 		)
 		.unwrap();
@@ -424,7 +424,7 @@ mod tests {
 		assert!(version::is_newer(&hotfix.version, "26.1.2.0"));
 
 		let stale = parse_release(
-			&release(&["ii-windows-26.1.1.0.zip", "ii-windows-26.1.1.0.zip.sha256"]),
+			&release(&["unyxedshell-26.1.1.0.zip", "unyxedshell-26.1.1.0.zip.sha256"]),
 			Arch::X64,
 		)
 		.unwrap();
@@ -435,24 +435,24 @@ mod tests {
 
 	#[test]
 	fn arm64_falls_back_to_x64() {
-		let old = release(&["ii-windows-setup.exe", "ii-windows-26.1.2.0.zip", "ii-windows-26.1.2.0.zip.sha256"]);
+		let old = release(&["unyxedshell-setup.exe", "unyxedshell-26.1.2.0.zip", "unyxedshell-26.1.2.0.zip.sha256"]);
 		let r = parse_release(&old, Arch::Arm64).unwrap();
-		assert_eq!(r.zip_name, "ii-windows-26.1.2.0.zip");
+		assert_eq!(r.zip_name, "unyxedshell-26.1.2.0.zip");
 		assert_eq!((r.arch, r.wanted_arch), (Arch::X64, Arch::Arm64));
 
 		let arm_without_sha =
-			release(&["ii-windows-26.1.2.0.zip", "ii-windows-26.1.2.0.zip.sha256", "ii-windows-26.1.2.0-arm64.zip"]);
+			release(&["unyxedshell-26.1.2.0.zip", "unyxedshell-26.1.2.0.zip.sha256", "unyxedshell-26.1.2.0-arm64.zip"]);
 		let r = parse_release(&arm_without_sha, Arch::Arm64).unwrap();
-		assert_eq!(r.zip_name, "ii-windows-26.1.2.0.zip");
+		assert_eq!(r.zip_name, "unyxedshell-26.1.2.0.zip");
 		assert_eq!((r.arch, r.wanted_arch), (Arch::X64, Arch::Arm64));
 
-		let nothing = release(&["ii-windows-setup.exe"]);
+		let nothing = release(&["unyxedshell-setup.exe"]);
 		assert!(matches!(parse_release(&nothing, Arch::Arm64), Err(Error::NoPackage(_))));
 	}
 
 	#[test]
 	fn update_keeps_the_installed_arch() {
-		let path = std::env::temp_dir().join(format!("iiw-release-arch-{}.json", std::process::id()));
+		let path = std::env::temp_dir().join(format!("unyx-release-arch-{}.json", std::process::id()));
 		let pick = |manifest: &str, native: Arch| {
 			std::fs::write(&path, manifest).unwrap();
 			let m = crate::manifest::Manifest::load(&path).unwrap().unwrap();
@@ -460,20 +460,20 @@ mod tests {
 		};
 		assert_eq!(
 			pick(r#"{"version":"26.1.1.0","arch":"arm64","wanted_arch":"arm64"}"#, Arch::Arm64),
-			"ii-windows-26.1.2.0-arm64.zip"
+			"unyxedshell-26.1.2.0-arm64.zip"
 		);
 		assert_eq!(
 			pick(r#"{"version":"26.1.1.0","arch":"x64","wanted_arch":"x64"}"#, Arch::Arm64),
-			"ii-windows-26.1.2.0.zip"
+			"unyxedshell-26.1.2.0.zip"
 		);
 		assert_eq!(
 			pick(r#"{"version":"26.1.1.0","arch":"x64","wanted_arch":"arm64"}"#, Arch::Arm64),
-			"ii-windows-26.1.2.0-arm64.zip"
+			"unyxedshell-26.1.2.0-arm64.zip"
 		);
-		assert_eq!(pick(r#"{"version":"26.1.1.0"}"#, Arch::Arm64), "ii-windows-26.1.2.0.zip");
+		assert_eq!(pick(r#"{"version":"26.1.1.0"}"#, Arch::Arm64), "unyxedshell-26.1.2.0.zip");
 		assert_eq!(
 			pick(r#"{"version":"26.1.1.0","arch":"arm64","wanted_arch":"arm64"}"#, Arch::X64),
-			"ii-windows-26.1.2.0.zip"
+			"unyxedshell-26.1.2.0.zip"
 		);
 		std::fs::remove_file(&path).unwrap();
 	}
@@ -481,19 +481,19 @@ mod tests {
 	#[test]
 	fn sha_files() {
 		let h = "a".repeat(64);
-		assert_eq!(parse_sha256_file(&format!("{h}  ii-windows-0.1.0.zip\n"), "ii-windows-0.1.0.zip").unwrap(), h);
+		assert_eq!(parse_sha256_file(&format!("{h}  unyxedshell-0.1.0.zip\n"), "unyxedshell-0.1.0.zip").unwrap(), h);
 		assert_eq!(
-			parse_sha256_file(&format!("{h} *dist/release/ii-windows-0.1.0.zip"), "ii-windows-0.1.0.zip").unwrap(),
+			parse_sha256_file(&format!("{h} *dist/release/unyxedshell-0.1.0.zip"), "unyxedshell-0.1.0.zip").unwrap(),
 			h
 		);
 		assert_eq!(parse_sha256_file(&format!("{}\n", h.to_uppercase()), "x.zip").unwrap(), h);
-		assert!(parse_sha256_file(&format!("{h}  other.zip"), "ii-windows-0.1.0.zip").is_err());
+		assert!(parse_sha256_file(&format!("{h}  other.zip"), "unyxedshell-0.1.0.zip").is_err());
 		assert!(parse_sha256_file("nothing", "x").is_err());
 	}
 
 	#[test]
 	fn hashing() {
-		let p = std::env::temp_dir().join(format!("iiw-sha-{}", std::process::id()));
+		let p = std::env::temp_dir().join(format!("unyx-sha-{}", std::process::id()));
 		std::fs::write(&p, b"abc").unwrap();
 		assert_eq!(sha256_file(&p).unwrap(), "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad");
 		std::fs::remove_file(&p).unwrap();

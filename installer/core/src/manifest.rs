@@ -147,7 +147,7 @@ impl Manifest {
 	pub fn new(install_dir: &Path) -> Manifest {
 		Manifest {
 			schema: SCHEMA,
-			product: "ii-windows".into(),
+			product: "unyxedshell".into(),
 			state: "installing".into(),
 			install_dir: install_dir.to_path_buf(),
 			..Default::default()
@@ -189,13 +189,13 @@ mod tests {
 
 	#[test]
 	fn roundtrip_and_unknown_fields() {
-		let dir = std::env::temp_dir().join(format!("iiw-manifest-test-{}", std::process::id()));
+		let dir = std::env::temp_dir().join(format!("unyx-manifest-test-{}", std::process::id()));
 		let path = dir.join("install-manifest.json");
 		let mut m = Manifest::new(&dir);
 		m.version = "0.1.0".into();
 		m.options.autostart = true;
 		m.options.autostart_method = Some(StartupMethod::Run);
-		m.items.startup_task = Some(StartupTask { name: "illogical-impulse-S-1-5-21-1".into() });
+		m.items.startup_task = Some(StartupTask { name: "unyxedshell-S-1-5-21-1".into() });
 		m.items.fonts.push(Font { file: "C:\\x.ttf".into(), registry_name: "X (TrueType)".into() });
 		m.pre_install = Some(PreInstall { taskbar_autohide: Some(false), ..Default::default() });
 		m.save(&path).unwrap();
@@ -218,7 +218,7 @@ mod tests {
 
 	#[test]
 	fn old_manifest_means_x64() {
-		let dir = std::env::temp_dir().join(format!("iiw-manifest-arch-{}", std::process::id()));
+		let dir = std::env::temp_dir().join(format!("unyx-manifest-arch-{}", std::process::id()));
 		let path = dir.join("install-manifest.json");
 		std::fs::create_dir_all(&dir).unwrap();
 		std::fs::write(&path, br#"{"schema":1,"version":"26.1.1.0","state":"installed"}"#).unwrap();

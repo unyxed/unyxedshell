@@ -200,7 +200,7 @@ if ($IiClassicConsole) {
             }
         }
 
-        $iiConfigPath = Join-Path $env:LOCALAPPDATA 'illogical-impulse\config.json'
+        $iiConfigPath = Join-Path $env:LOCALAPPDATA 'unyxedshell-config\config.json'
         $iiTransparent = $false
         if (Test-Path -LiteralPath $iiConfigPath) {
             $iiTransparent = (Get-Content -LiteralPath $iiConfigPath -Raw -Encoding UTF8 | ConvertFrom-Json).appearance.transparency.enable -eq $true
@@ -229,9 +229,9 @@ if (Get-Command eza -ErrorAction SilentlyContinue) {
     }
 }
 
-$IiQsExePath = Join-Path $env:LOCALAPPDATA 'ii-windows\qs.exe'
+$IiQsExePath = Join-Path $env:LOCALAPPDATA 'unyxedshell\qs.exe'
 if (Test-Path -LiteralPath $IiQsExePath) {
-    function global:q { & $IiQsExePath -c ii @args }
+    function global:q { & $IiQsExePath -c unyxedshell @args }
 }
 
 if ($Host.Name -eq 'ConsoleHost' -and -not $global:__iiProfileBannerCleared) {

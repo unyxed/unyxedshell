@@ -225,7 +225,7 @@ ContentPage {
                 : SelfUpdate.lastError !== ""
                     ? SelfUpdate.lastError
                     : SelfUpdate.installedVersion !== ""
-                        ? Translation.tr("ii-windows %1 is up to date.").arg(SelfUpdate.installedVersion)
+                        ? Translation.tr("unyxedshell %1 is up to date.").arg(SelfUpdate.installedVersion)
                         : Translation.tr("Couldn't determine the installed version.")
         }
 

@@ -50,7 +50,7 @@ impl Arch {
 	}
 
 	pub fn package_name(self, version: &str) -> String {
-		format!("ii-windows-{version}{}.zip", self.package_suffix())
+		format!("unyxedshell-{version}{}.zip", self.package_suffix())
 	}
 
 	pub fn runs_on(self, native: Arch) -> bool {
@@ -135,8 +135,8 @@ mod tests {
 
 	#[test]
 	fn names_and_machines() {
-		assert_eq!(Arch::X64.package_name("26.1.2.0"), "ii-windows-26.1.2.0.zip");
-		assert_eq!(Arch::Arm64.package_name("26.1.2.0"), "ii-windows-26.1.2.0-arm64.zip");
+		assert_eq!(Arch::X64.package_name("26.1.2.0"), "unyxedshell-26.1.2.0.zip");
+		assert_eq!(Arch::Arm64.package_name("26.1.2.0"), "unyxedshell-26.1.2.0-arm64.zip");
 		assert_eq!(split_package_stem("26.1.1.0-unstable-arm64"), ("26.1.1.0-unstable", Arch::Arm64));
 		assert_eq!(split_package_stem("26.1.1.0-fix1-ARM64"), ("26.1.1.0-fix1", Arch::Arm64));
 		assert_eq!(split_package_stem("26.1.1.0"), ("26.1.1.0", Arch::X64));
@@ -188,7 +188,7 @@ mod tests {
 
 	#[test]
 	fn native_matches_the_runner() {
-		if let Some(want) = std::env::var("IIW_EXPECT_NATIVE_ARCH").ok().and_then(|v| Arch::parse(&v)) {
+		if let Some(want) = std::env::var("UNYX_EXPECT_NATIVE_ARCH").ok().and_then(|v| Arch::parse(&v)) {
 			assert_eq!(native(), want);
 		}
 	}

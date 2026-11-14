@@ -102,7 +102,7 @@ pub fn same(a: &str, b: &str) -> bool {
 pub fn package_name_parts(name: &str) -> Option<(String, Arch)> {
 	let lower = name.to_ascii_lowercase();
 	let stem = lower.strip_suffix(".zip")?;
-	let rest = stem.strip_prefix("ii-windows-")?;
+	let rest = stem.strip_prefix("unyxedshell-")?;
 	let original = &name[name.len() - 4 - rest.len()..name.len() - 4];
 	let (ver, arch) = crate::arch::split_package_stem(original);
 	Version::parse(ver).map(|_| (normalize(ver), arch))
@@ -141,7 +141,7 @@ mod tests {
 		assert!(!is_newer("26.1.1.0", "26.1.1.0"));
 		assert!(!is_prerelease("26.1.1.0-fix1"));
 		assert!(is_prerelease("26.1.1.0-unstable"));
-		assert_eq!(from_package_name("ii-windows-26.1.1.0-fix1.zip").as_deref(), Some("26.1.1.0-fix1"));
+		assert_eq!(from_package_name("unyxedshell-26.1.1.0-fix1.zip").as_deref(), Some("26.1.1.0-fix1"));
 	}
 
 	#[test]
@@ -164,29 +164,29 @@ mod tests {
 
 	#[test]
 	fn package_names() {
-		assert_eq!(from_package_name("ii-windows-0.1.0.zip").as_deref(), Some("0.1.0"));
-		assert_eq!(from_package_name("ii-windows-v1.2.3.zip").as_deref(), Some("1.2.3"));
-		assert_eq!(from_package_name("II-Windows-0.3.0-rc.1.ZIP").as_deref(), Some("0.3.0-rc.1"));
-		assert_eq!(from_package_name("ii-windows-setup.exe"), None);
-		assert_eq!(from_package_name("ii-windows-20261002.zip").as_deref(), Some("20261002"));
-		assert_eq!(from_package_name("ii-windows-latest.zip"), None);
+		assert_eq!(from_package_name("unyxedshell-0.1.0.zip").as_deref(), Some("0.1.0"));
+		assert_eq!(from_package_name("unyxedshell-v1.2.3.zip").as_deref(), Some("1.2.3"));
+		assert_eq!(from_package_name("UnyxedShell-0.3.0-rc.1.ZIP").as_deref(), Some("0.3.0-rc.1"));
+		assert_eq!(from_package_name("unyxedshell-setup.exe"), None);
+		assert_eq!(from_package_name("unyxedshell-20261002.zip").as_deref(), Some("20261002"));
+		assert_eq!(from_package_name("unyxedshell-latest.zip"), None);
 		assert_eq!(from_package_name("other-0.1.0.zip"), None);
 	}
 
 	#[test]
 	fn arm64_package_names() {
 		assert_eq!(
-			package_name_parts("ii-windows-26.1.1.0-unstable-arm64.zip"),
+			package_name_parts("unyxedshell-26.1.1.0-unstable-arm64.zip"),
 			Some(("26.1.1.0-unstable".to_string(), Arch::Arm64))
 		);
 		assert_eq!(
-			package_name_parts("ii-windows-26.1.2.0-fix1-arm64.zip"),
+			package_name_parts("unyxedshell-26.1.2.0-fix1-arm64.zip"),
 			Some(("26.1.2.0-fix1".to_string(), Arch::Arm64))
 		);
-		assert_eq!(package_name_parts("ii-windows-26.1.2.0.zip"), Some(("26.1.2.0".to_string(), Arch::X64)));
-		assert_eq!(from_package_name("ii-windows-26.1.2.0-arm64.zip").as_deref(), Some("26.1.2.0"));
-		assert!(!is_prerelease(&from_package_name("ii-windows-26.1.2.0-arm64.zip").unwrap()));
-		assert_eq!(package_name_parts("ii-windows-arm64.zip"), None);
-		assert_eq!(package_name_parts("ii-windows-26.1.2.0-arm64.zip.sha256"), None);
+		assert_eq!(package_name_parts("unyxedshell-26.1.2.0.zip"), Some(("26.1.2.0".to_string(), Arch::X64)));
+		assert_eq!(from_package_name("unyxedshell-26.1.2.0-arm64.zip").as_deref(), Some("26.1.2.0"));
+		assert!(!is_prerelease(&from_package_name("unyxedshell-26.1.2.0-arm64.zip").unwrap()));
+		assert_eq!(package_name_parts("unyxedshell-arm64.zip"), None);
+		assert_eq!(package_name_parts("unyxedshell-26.1.2.0-arm64.zip.sha256"), None);
 	}
 }

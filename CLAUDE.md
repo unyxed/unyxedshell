@@ -4,7 +4,7 @@ unyxedshell: a Windows desktop shell (Quickshell engine + QML shell + Tauri setu
 
 ## First run on a new clone
 1. `git init` (if there is no `.git`), then `git config core.hooksPath .githooks`.
-2. Install the upstream-built shell once with its setup, so `%LOCALAPPDATA%\quickshell\ii` exists.
+2. Install the upstream-built shell once with its setup, so `%LOCALAPPDATA%\quickshell\unyxedshell` exists.
 3. Read `BACKLOG.local.md` if it exists. It is private.
 
 ## Private files (hard rule)
@@ -15,11 +15,11 @@ unyxedshell: a Windows desktop shell (Quickshell engine + QML shell + Tauri setu
 
 ## Try a QML change
 `powershell -File tools/dev/sync-shell.ps1` copies `shell/` into the installed copy, clears the QML cache, restarts the shell. Logs: `%LOCALAPPDATA%\quickshell\run\by-id\<run>\log.log`.
-Never edit `%LOCALAPPDATA%\quickshell\ii` directly; `shell/` is the source.
+Never edit `%LOCALAPPDATA%\quickshell\unyxedshell` directly; `shell/` is the source.
 
 ## Engine / setup builds
-- Engine (C++20, Qt 6.11.2, clang-cl): `ci/upstream-build.yml.reference` lists every step and version. Output is `qs.exe` and `qsw.exe`; copy over the ones in `%LOCALAPPDATA%\ii-windows` to test.
-- Setup: `cd installer && cargo build --release -p ii-windows-setup --target x86_64-pc-windows-msvc`.
+- Engine (C++20, Qt 6.11.2, clang-cl): `ci/upstream-build.yml.reference` lists every step and version. Output is `qs.exe` and `qsw.exe`; copy over the ones in `%LOCALAPPDATA%\unyxedshell` to test.
+- Setup: `cd installer && cargo build --release -p unyxedshell-setup --target x86_64-pc-windows-msvc`.
 - `tools/` has cross-compile helpers (`env.sh`, `clang-cl-xwin.cmake`). The upstream workflow is kept as a reference only and is not active.
 
 ## Code rules
@@ -33,4 +33,4 @@ Never edit `%LOCALAPPDATA%\quickshell\ii` directly; `shell/` is the source.
 
 ## Known hazards
 - The shell, setup and installer still check the upstream project's GitHub releases for updates. Until re-pointed, an "Update" would replace this fork with upstream. Do not run Update or Repair from the upstream setup while testing.
-- The setup's Update/Repair overwrite `%LOCALAPPDATA%\quickshell\ii`.
+- The setup's Update/Repair overwrite `%LOCALAPPDATA%\quickshell\unyxedshell`.

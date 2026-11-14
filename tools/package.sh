@@ -2,15 +2,15 @@
 set -euo pipefail
 . "$(dirname "$0")/env.sh"
 
-SRC="$IIW/dist/ii-windows"
-[ -d "$SRC" ] || { echo "no dist/ii-windows - run tools/deploy-ii.sh first" >&2; exit 1; }
+SRC="$UNYX/dist/unyxedshell"
+[ -d "$SRC" ] || { echo "no dist/unyxedshell - run tools/deploy-shell.sh first" >&2; exit 1; }
 
 DATE="$(date +%Y%m%d)"
-STAGE="$IIW/build/package-stage"
+STAGE="$UNYX/build/package-stage"
 if [ "$ARCH" = x64 ]; then
-	OUT="$IIW/dist/ii-windows-$DATE.zip"
+	OUT="$UNYX/dist/unyxedshell-$DATE.zip"
 else
-	OUT="$IIW/dist/ii-windows-$DATE-$ARCH.zip"
+	OUT="$UNYX/dist/unyxedshell-$DATE-$ARCH.zip"
 fi
 
 rm -rf "$STAGE"
@@ -21,7 +21,7 @@ mkdir -p "$STAGE"
 		cp -a "$SRC/${entry#./}" "$STAGE/"
 	done
 
-cp -f "$IIW/tools/install.ps1" "$IIW/tools/uninstall.ps1" "$STAGE/"
+cp -f "$UNYX/tools/install.ps1" "$UNYX/tools/uninstall.ps1" "$STAGE/"
 
 rm -f "$OUT"
 (cd "$STAGE" && zip -rq "$OUT" .)

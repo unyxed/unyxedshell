@@ -1,5 +1,5 @@
 $ErrorActionPreference = 'Stop'
-$d = "$env:LOCALAPPDATA\iiw-agent"
+$d = "$env:LOCALAPPDATA\unyx-agent"
 New-Item -Force -ItemType Directory $d | Out-Null
 
 Copy-Item -Force "$PSScriptRoot\key", "$PSScriptRoot\key.pub" $d

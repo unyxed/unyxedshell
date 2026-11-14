@@ -6,8 +6,8 @@ FloatingWindow {
     implicitWidth: 900
     implicitHeight: 600
     color: "white"
-    property string fam: Quickshell.env("IIW_FONTTEST_FAMILY") || "Bahnschrift"
-    property int count: parseInt(Quickshell.env("IIW_FONTTEST_COUNT") || "800")
+    property string fam: Quickshell.env("UNYX_FONTTEST_FAMILY") || "Bahnschrift"
+    property int count: parseInt(Quickshell.env("UNYX_FONTTEST_COUNT") || "800")
     property int shown: 0
     Flow {
         anchors.fill: parent

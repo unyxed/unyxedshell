@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "unyxedshell",
-  "mainBinaryName": "ii-windows-setup",
-  "identifier": "io.github.nunreasonable.ii-windows-setup",
+  "mainBinaryName": "unyxedshell-setup",
+  "identifier": "app.unyxedshell.setup",
   "build": { "frontendDist": "../ui" },
   "app": {
     "withGlobalTauri": true,
@@ -14,8 +14,8 @@
   "bundle": {
     "active": false,
     "icon": ["icons/icon.ico", "icons/icon.png"],
-    "publisher": "nunreasonable",
+    "publisher": "unyxedshell",
     "shortDescription": "Installs unyxedshell for the current user",
-    "copyright": "unyxedshell contributors"
+    "copyright": "ii-windows contributors, unyxedshell contributors"
   }
 }

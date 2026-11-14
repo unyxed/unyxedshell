@@ -86,7 +86,7 @@ pub fn write(config: &Path, style: &str) -> Result<Outcome, Error> {
 	if let Some(dir) = config.parent() {
 		std::fs::create_dir_all(dir).map_err(Error::Io)?;
 	}
-	let tmp = config.with_extension("json.iiw-tmp");
+	let tmp = config.with_extension("json.unyx-tmp");
 	std::fs::write(&tmp, text).map_err(Error::Io)?;
 	if let Err(e) = std::fs::rename(&tmp, config) {
 		let _ = std::fs::remove_file(&tmp);
@@ -101,7 +101,7 @@ mod tests {
 	use std::path::PathBuf;
 
 	fn tmp(name: &str) -> PathBuf {
-		let d = std::env::temp_dir().join(format!("iiw-style-{}-{name}", std::process::id()));
+		let d = std::env::temp_dir().join(format!("unyx-style-{}-{name}", std::process::id()));
 		let _ = std::fs::remove_dir_all(&d);
 		std::fs::create_dir_all(&d).unwrap();
 		d.join(CONFIG_FILE)
@@ -138,7 +138,7 @@ mod tests {
 		expected["appearance"]["visualStyle"] = "end4pc".into();
 		let after: Value = serde_json::from_str(&std::fs::read_to_string(&p).unwrap()).unwrap();
 		assert_eq!(after, expected);
-		assert!(!p.with_extension("json.iiw-tmp").exists());
+		assert!(!p.with_extension("json.unyx-tmp").exists());
 	}
 
 	#[test]

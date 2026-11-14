@@ -38,7 +38,7 @@ Singleton {
     property string confirmedPath: ""
 
     readonly property bool _shellProcess: {
-        const process = Quickshell.env("IIW_PROCESS") ?? "";
+        const process = Quickshell.env("UNYX_PROCESS") ?? "";
         return process === "" || process === "shell";
     }
     readonly property bool perDesktop: Platform.isWindows && (Config.options.background.desktopWallpapers?.enable ?? false)

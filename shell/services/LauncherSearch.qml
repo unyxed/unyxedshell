@@ -23,7 +23,7 @@ Singleton {
         }
     }
 
-    // Load user action scripts from ~/.config/illogical-impulse/actions/
+    // Load user action scripts from ~/.config/unyxedshell-config/actions/
     // Uses FolderListModel to auto-reload when scripts are added/removed
     property var userActionsFolder: null
     onQueryChanged: {

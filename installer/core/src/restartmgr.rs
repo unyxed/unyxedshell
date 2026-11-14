@@ -27,7 +27,7 @@ fn normalize(mut apps: Vec<LockingApp>) -> Vec<LockingApp> {
 	for app in &mut apps {
 		app.app_name = app.app_name.trim().to_string();
 		if is_ii_exe(&app.exe) {
-			app.app_name = "illogical-impulse".into();
+			app.app_name = "unyxedshell".into();
 		}
 	}
 	let mut seen = std::collections::HashSet::new();
@@ -200,8 +200,8 @@ mod tests {
 
 	#[test]
 	fn describe_renames_ii_processes() {
-		assert_eq!(describe(&[app("Quickshell", "qsw.exe")]), Some("illogical-impulse (qsw.exe)".into()));
-		assert_eq!(describe(&[app("", "qs.exe")]), Some("illogical-impulse (qs.exe)".into()));
+		assert_eq!(describe(&[app("Quickshell", "qsw.exe")]), Some("unyxedshell (qsw.exe)".into()));
+		assert_eq!(describe(&[app("", "qs.exe")]), Some("unyxedshell (qs.exe)".into()));
 	}
 
 	#[test]

@@ -123,7 +123,7 @@ mod tests {
 	}
 
 	fn tmp(name: &str) -> PathBuf {
-		let d = std::env::temp_dir().join(format!("iiw-appinstaller-test-{}-{name}", std::process::id()));
+		let d = std::env::temp_dir().join(format!("unyx-appinstaller-test-{}-{name}", std::process::id()));
 		let _ = std::fs::remove_dir_all(&d);
 		std::fs::create_dir_all(&d).unwrap();
 		d

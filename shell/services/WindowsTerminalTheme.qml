@@ -306,7 +306,7 @@ Singleton {
             "term8", "term9", "term10", "term11", "term12", "term13", "term14", "term15"];
         const ansiNames = ["black", "red", "green", "yellow", "blue", "purple", "cyan", "white",
             "brightBlack", "brightRed", "brightGreen", "brightYellow", "brightBlue", "brightPurple", "brightCyan", "brightWhite"];
-        const scheme = { name: "illogical-impulse" };
+        const scheme = { name: "unyxedshell" };
         for (let i = 0; i < ansiTerms.length; i++) scheme[ansiNames[i]] = colorMap[ansiTerms[i]];
         scheme.background = colorMap.term0;
         scheme.foreground = colorMap.term7;
@@ -316,7 +316,7 @@ Singleton {
         const transparencyOn = Config.options.appearance.transparency.enable === true;
         const profileUpdate = guid => ({
             updates: guid,
-            colorScheme: "illogical-impulse",
+            colorScheme: "unyxedshell",
             font: { face: "JetBrainsMono Nerd Font", size: 11 },
             cursorShape: "bar",
             padding: "22",

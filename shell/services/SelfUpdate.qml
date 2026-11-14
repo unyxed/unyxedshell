@@ -14,14 +14,14 @@ Singleton {
     readonly property bool enabled: false
     readonly property string curlBin: Platform.isWindows ? "curl.exe" : "curl"
     readonly property string repo: "nunreasonable/ii-windows"
-    readonly property string setupAssetName: "ii-windows-setup.exe"
-    readonly property string apiOverride: Quickshell.env("IIW_SELF_UPDATE_RELEASE_JSON") || ""
+    readonly property string setupAssetName: "unyxedshell-setup.exe"
+    readonly property string apiOverride: Quickshell.env("UNYX_SELF_UPDATE_RELEASE_JSON") || ""
     readonly property string apiUrl: root.apiOverride !== "" ? root.apiOverride
         : root.installedIsPrerelease ? `https://api.github.com/repos/${root.repo}/releases?per_page=20`
         : `https://api.github.com/repos/${root.repo}/releases/latest`
-    readonly property string installedVersionOverride: Quickshell.env("IIW_SELF_UPDATE_INSTALLED_VERSION") || ""
+    readonly property string installedVersionOverride: Quickshell.env("UNYX_SELF_UPDATE_INSTALLED_VERSION") || ""
     readonly property int recheckIntervalMs: 24 * 60 * 60 * 1000
-    readonly property var notifyIdentity: ["-a", "ii-windows", "-i", "illogical-impulse"]
+    readonly property var notifyIdentity: ["-a", "unyxedshell", "-i", "illogical-impulse"]
 
     property string installedVersion: root.installedVersionOverride
     readonly property bool installedIsPrerelease: root._preRank(root._parseVersion(root.installedVersion)?.pre ?? null) < 0
@@ -150,7 +150,7 @@ Singleton {
 
     function goBackToStable() {
         if (!root.enabled || !root.canGoBackToStable) return;
-        const setup = `${Directories.installDir}/ii-windows-setup.exe`.replace(/\//g, "\\");
+        const setup = `${Directories.installDir}/unyxedshell-setup.exe`.replace(/\//g, "\\");
         Quickshell.execDetached([setup, "--update", "--stable"]);
     }
 
@@ -181,7 +181,7 @@ Singleton {
         root.lastError = "";
         checkProc.command = [root.curlBin, "-sS", "--max-time", "10", "-w", "\nHTTP_STATUS:%{http_code}",
             "-H", "Accept: application/vnd.github+json",
-            "-H", "User-Agent: ii-windows-quickshell",
+            "-H", "User-Agent: unyxedshell-quickshell",
             root.apiUrl];
         checkProc.running = true;
     }
@@ -205,7 +205,7 @@ Singleton {
     function _updateFromNotificationAction() {
         if (root.downloading) return;
         root._updateFromNotification = true;
-        Notifications.sendDesktop(Translation.tr("ii-windows update"), Translation.tr("Downloading the update…"), [...root.notifyIdentity, "-e"]);
+        Notifications.sendDesktop(Translation.tr("unyxedshell update"), Translation.tr("Downloading the update…"), [...root.notifyIdentity, "-e"]);
         root.startUpdate();
     }
 
@@ -217,7 +217,7 @@ Singleton {
         if (root.setupUrl !== "") actions.push("-A", `update=${Translation.tr("Update")}`);
         if (root.htmlUrl !== "") actions.push("-A", `notes=${Translation.tr("What's new")}`);
         root._notificationId = Notifications.sendDesktop(
-            Translation.tr("ii-windows update available"),
+            Translation.tr("unyxedshell update available"),
             Translation.tr("%1 \"%2\" is ready to install. Nothing changes until you confirm it in the setup.").arg(root.latestVersion).arg(root.releaseName),
             actions
         ) ?? -1;
@@ -376,14 +376,14 @@ Singleton {
             root._updateFromNotification = false;
             if (exitCode !== 0) {
                 root.lastError = Translation.tr("Couldn't download the update.");
-                if (fromNotification) Notifications.sendDesktop(Translation.tr("ii-windows update"), root.lastError, root.notifyIdentity);
+                if (fromNotification) Notifications.sendDesktop(Translation.tr("unyxedshell update"), root.lastError, root.notifyIdentity);
                 return;
             }
             const sizeMatch = downloadCollector.text.match(/SIZE:(\d+)/);
             const downloadedSize = sizeMatch ? parseInt(sizeMatch[1], 10) : -1;
             if (root.setupSize > 0 && downloadedSize !== root.setupSize) {
                 root.lastError = Translation.tr("The downloaded file doesn't match the size GitHub reported.");
-                if (fromNotification) Notifications.sendDesktop(Translation.tr("ii-windows update"), root.lastError, root.notifyIdentity);
+                if (fromNotification) Notifications.sendDesktop(Translation.tr("unyxedshell update"), root.lastError, root.notifyIdentity);
                 return;
             }
             Quickshell.execDetached([root.downloadDest, "--update"]);

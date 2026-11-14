@@ -219,7 +219,7 @@ Singleton {
         listProc.source = src;
         listProc.command = [root.curlBin, "-sSL", "-w", "\nHTTP_STATUS:%{http_code}",
             "-H", "Accept: application/vnd.github+json",
-            "-H", "User-Agent: ii-windows-quickshell",
+            "-H", "User-Agent: unyxedshell-quickshell",
             `https://api.github.com/repos/${src.repo}/git/trees/${src.branch}?recursive=1`];
         listProc.running = true;
     }

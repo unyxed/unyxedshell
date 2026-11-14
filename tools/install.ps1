@@ -23,20 +23,20 @@ function Invoke-Mirror {
 }
 
 function Remove-SelfTask {
-	$name = 'illogical-impulse-' + [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
+	$name = 'unyxedshell-' + [Security.Principal.WindowsIdentity]::GetCurrent().User.Value
 	if (Get-Command Unregister-ScheduledTask -ErrorAction SilentlyContinue) {
 		try { Unregister-ScheduledTask -TaskName $name -TaskPath '\' -Confirm:$false -ErrorAction SilentlyContinue } catch {}
 	}
 }
 
 $ScriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
-$InstallDir = Join-Path $env:LOCALAPPDATA 'ii-windows'
-$QuickshellIiDir = Join-Path $env:LOCALAPPDATA 'quickshell\ii'
+$InstallDir = Join-Path $env:LOCALAPPDATA 'unyxedshell'
+$QuickshellIiDir = Join-Path $env:LOCALAPPDATA 'quickshell\unyxedshell'
 $ColorsPath = Join-Path $env:LOCALAPPDATA 'quickshell\State\user\generated\colors.json'
 $StartMenuDir = Join-Path $env:APPDATA 'Microsoft\Windows\Start Menu\Programs'
 $RunKey = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\Run'
 
-Write-Host "Installing ii-windows to $InstallDir ..."
+Write-Host "Installing unyxedshell to $InstallDir ..."
 
 Get-Process -Name 'qsw', 'qs' -ErrorAction SilentlyContinue |
 	Where-Object { $_.Path -like "$InstallDir\*" } |
@@ -72,30 +72,30 @@ New-Item -Force -ItemType Directory $StartMenuDir | Out-Null
 $shell = New-Object -ComObject WScript.Shell
 $qsw = Join-Path $InstallDir 'qsw.exe'
 
-$mainShortcut = $shell.CreateShortcut((Join-Path $StartMenuDir 'illogical-impulse.lnk'))
+$mainShortcut = $shell.CreateShortcut((Join-Path $StartMenuDir 'unyxedshell.lnk'))
 $mainShortcut.TargetPath = $qsw
-$mainShortcut.Arguments = '-n -c ii'
+$mainShortcut.Arguments = '-n -c unyxedshell'
 $mainShortcut.WorkingDirectory = $InstallDir
 $mainShortcut.IconLocation = $qsw
-$mainShortcut.Description = 'illogical-impulse shell'
+$mainShortcut.Description = 'unyxedshell'
 $mainShortcut.Save()
 
-$settingsShortcut = $shell.CreateShortcut((Join-Path $StartMenuDir 'ii Settings.lnk'))
+$settingsShortcut = $shell.CreateShortcut((Join-Path $StartMenuDir 'unyxedshell Settings.lnk'))
 $settingsShortcut.TargetPath = $qsw
 $settingsShortcut.Arguments = '-p "' + (Join-Path $QuickshellIiDir 'settings.qml') + '"'
 $settingsShortcut.WorkingDirectory = $InstallDir
 $settingsShortcut.IconLocation = $qsw
-$settingsShortcut.Description = 'illogical-impulse settings'
+$settingsShortcut.Description = 'unyxedshell settings'
 $settingsShortcut.Save()
 
 Remove-SelfTask
 if ($Autostart) {
-	$runCommand = '"' + $qsw + '" -n -c ii'
-	New-ItemProperty -Path $RunKey -Name 'illogical-impulse' -Value $runCommand -PropertyType String -Force | Out-Null
-	Write-Host "Autostart enabled (HKCU Run: illogical-impulse)."
+	$runCommand = '"' + $qsw + '" -n -c unyxedshell'
+	New-ItemProperty -Path $RunKey -Name 'unyxedshell' -Value $runCommand -PropertyType String -Force | Out-Null
+	Write-Host "Autostart enabled (HKCU Run: unyxedshell)."
 } else {
-	Remove-ItemProperty -Path $RunKey -Name 'illogical-impulse' -ErrorAction SilentlyContinue
+	Remove-ItemProperty -Path $RunKey -Name 'unyxedshell' -ErrorAction SilentlyContinue
 }
 
-Write-Host "Installed. Launch 'illogical-impulse' from the Start menu, or run:"
-Write-Host "  `"$qsw`" -c ii"
+Write-Host "Installed. Launch 'unyxedshell' from the Start menu, or run:"
+Write-Host "  `"$qsw`" -c unyxedshell"

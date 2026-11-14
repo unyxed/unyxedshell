@@ -1,4 +1,4 @@
-// Added for the ii-windows port; not part of upstream MicroTeX.
+// Added for the unyxedshell port; not part of upstream MicroTeX.
 // MIT-licensed, same as the rest of this project.
 
 #include "latex.h"
@@ -104,7 +104,7 @@ int main(int argc, char** argv) {
 		if (a == "-headless") headless = true;
 	}
 	if (!headless) {
-		fprintf(stderr, "LaTeX.exe (ii-windows headless build) only supports -headless mode.\n");
+		fprintf(stderr, "LaTeX.exe (unyxedshell headless build) only supports -headless mode.\n");
 		return 1;
 	}
 

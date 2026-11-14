@@ -10,7 +10,7 @@ $ErrorActionPreference = 'Stop'
 $here = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 New-Item -ItemType Directory -Force $Work | Out-Null
-$dev = Join-Path $Work 'ii-windows'
+$dev = Join-Path $Work 'unyxedshell'
 $stage = Join-Path $Work 'smoketest'
 Remove-Item -Recurse -Force $dev, $stage -ErrorAction SilentlyContinue
 New-Item -ItemType Directory -Force $dev, $stage, (Join-Path $Work 'logs') | Out-Null
@@ -20,7 +20,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 foreach ($f in 'smoke.ps1', 'fonttest.qml', 'inherit.qml') { Copy-Item -Force (Join-Path $here $f) $stage }
 Copy-Item -Force $CompileCheck (Join-Path $stage 'compilecheck.qml')
 if ($Setup -and (Test-Path $Setup)) {
-    Copy-Item -Force $Setup (Join-Path $stage 'ii-windows-setup.exe')
+    Copy-Item -Force $Setup (Join-Path $stage 'unyxedshell-setup.exe')
 } else {
     Write-Output "NOTE  no -Setup given - the setup/update check will be skipped"
 }
@@ -38,7 +38,7 @@ $peOffset = [BitConverter]::ToInt32($bytes, 0x3C)
 $exeMachine = [BitConverter]::ToUInt16($bytes, $peOffset + 4)
 $exeArch = switch ($exeMachine) { 0x8664 { 'x64' } 0xAA64 { 'arm64' } default { ('0x{0:X4}' -f $exeMachine) } }
 
-$env:IIW_ROOT = $Work
+$env:UNYX_ROOT = $Work
 $ErrorActionPreference = 'Continue'
 $out = & (Join-Path $stage 'smoke.ps1') -Root $stage 2>&1 | ForEach-Object { "$_" }
 $lines = @("INFO  machine  $machine (PowerShell process $arch), qsw.exe $exeArch") + $out

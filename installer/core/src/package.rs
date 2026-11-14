@@ -5,7 +5,7 @@ use std::path::{Path, PathBuf};
 use crate::arch::{self, Arch};
 use crate::version;
 
-pub const REQUIRED: [&str; 3] = ["qsw.exe", "qs.exe", "config/ii/shell.qml"];
+pub const REQUIRED: [&str; 3] = ["qsw.exe", "qs.exe", "config/unyxedshell/shell.qml"];
 
 #[derive(Debug, Clone, serde::Serialize)]
 pub struct PackageInfo {
@@ -73,7 +73,7 @@ pub fn inspect(path: &Path) -> Result<PackageInfo, Error> {
 	for req in REQUIRED {
 		let want = format!("{prefix}{req}");
 		if !names.iter().any(|n| n.eq_ignore_ascii_case(&want)) {
-			return Err(Error::Invalid(format!("the package has no {req}; it is not an ii-windows package")));
+			return Err(Error::Invalid(format!("the package has no {req}; it is not an unyxedshell package")));
 		}
 	}
 	let mut unpacked = 0u64;
@@ -97,7 +97,7 @@ pub fn inspect(path: &Path) -> Result<PackageInfo, Error> {
 	}
 	if ver.is_empty() {
 		return Err(Error::Invalid(
-			"the package has no VERSION file and its name isn't ii-windows-<version>.zip".into(),
+			"the package has no VERSION file and its name isn't unyxedshell-<version>.zip".into(),
 		));
 	}
 	let has_setup_exe = names.iter().any(|n| n.eq_ignore_ascii_case(&format!("{prefix}{}", crate::SETUP_EXE)));
@@ -234,7 +234,7 @@ mod tests {
 	}
 
 	fn tmp(name: &str) -> PathBuf {
-		let d = std::env::temp_dir().join(format!("iiw-pkg-{}-{name}", std::process::id()));
+		let d = std::env::temp_dir().join(format!("unyx-pkg-{}-{name}", std::process::id()));
 		let _ = std::fs::remove_dir_all(&d);
 		std::fs::create_dir_all(&d).unwrap();
 		d
@@ -243,11 +243,11 @@ mod tests {
 	#[test]
 	fn inspect_and_extract() {
 		let d = tmp("a");
-		let zip_path = d.join("ii-windows-0.3.0.zip");
+		let zip_path = d.join("unyxedshell-0.3.0.zip");
 		let files: &[(&str, &[u8])] = &[
 			("qsw.exe", b"MZ"),
 			("qs.exe", b"MZ"),
-			("config/ii/shell.qml", b"import QtQuick"),
+			("config/unyxedshell/shell.qml", b"import QtQuick"),
 			("fonts/JetBrainsMonoNerdFont-Regular.ttf", b"font"),
 			("VERSION", b"0.3.1\n"),
 		];
@@ -260,7 +260,7 @@ mod tests {
 		let mut last = 0;
 		extract(&info, &out, &mut |done, _| last = done, &|| false).unwrap();
 		assert_eq!(last, info.unpacked_size);
-		assert_eq!(std::fs::read(out.join("config").join("ii").join("shell.qml")).unwrap(), b"import QtQuick");
+		assert_eq!(std::fs::read(out.join("config").join("unyxedshell").join("shell.qml")).unwrap(), b"import QtQuick");
 		assert_eq!(info.arch, Arch::X64);
 		assert_eq!(find_offline(&d, Arch::X64).unwrap(), zip_path);
 		std::fs::remove_dir_all(&d).unwrap();
@@ -269,11 +269,11 @@ mod tests {
 	#[test]
 	fn extract_keeps_entry_times() {
 		let d = tmp("c");
-		let zip_path = d.join("ii-windows-0.4.0.zip");
+		let zip_path = d.join("unyxedshell-0.4.0.zip");
 		let mut w = zip::ZipWriter::new(File::create(&zip_path).unwrap());
 		let when = zip::DateTime::from_date_and_time(2026, 10, 8, 20, 30, 4).unwrap();
 		let opts = zip::write::SimpleFileOptions::default().last_modified_time(when);
-		for (name, data) in [("qsw.exe", &b"MZ"[..]), ("qs.exe", b"MZ"), ("config/ii/shell.qml", b"import QtQuick")] {
+		for (name, data) in [("qsw.exe", &b"MZ"[..]), ("qs.exe", b"MZ"), ("config/unyxedshell/shell.qml", b"import QtQuick")] {
 			w.start_file(name, opts).unwrap();
 			w.write_all(data).unwrap();
 		}
@@ -281,7 +281,7 @@ mod tests {
 		let info = inspect(&zip_path).unwrap();
 		let out = d.join("out");
 		extract(&info, &out, &mut |_, _| {}, &|| false).unwrap();
-		let modified = std::fs::metadata(out.join("config").join("ii").join("shell.qml")).unwrap().modified().unwrap();
+		let modified = std::fs::metadata(out.join("config").join("unyxedshell").join("shell.qml")).unwrap().modified().unwrap();
 		assert_eq!(modified.duration_since(std::time::UNIX_EPOCH).unwrap().as_secs(), 1_791_491_404);
 		std::fs::remove_dir_all(&d).unwrap();
 	}
@@ -289,20 +289,20 @@ mod tests {
 	#[test]
 	fn single_top_folder_and_rejects() {
 		let d = tmp("b");
-		let zip_path = d.join("ii-windows-0.1.0.zip");
-		make_zip(&zip_path, "ii-windows/", &[("qsw.exe", b"MZ"), ("qs.exe", b"MZ"), ("config/ii/shell.qml", b"x")]);
+		let zip_path = d.join("unyxedshell-0.1.0.zip");
+		make_zip(&zip_path, "unyxedshell/", &[("qsw.exe", b"MZ"), ("qs.exe", b"MZ"), ("config/unyxedshell/shell.qml", b"x")]);
 		let info = inspect(&zip_path).unwrap();
-		assert_eq!(info.prefix, "ii-windows/");
+		assert_eq!(info.prefix, "unyxedshell/");
 		assert_eq!(info.version, "0.1.0");
 		let out = d.join("out");
 		extract(&info, &out, &mut |_, _| {}, &|| false).unwrap();
 		assert!(out.join("qsw.exe").is_file());
 
-		let bad = d.join("ii-windows-0.2.0.zip");
+		let bad = d.join("unyxedshell-0.2.0.zip");
 		make_zip(&bad, "", &[("readme.txt", b"x")]);
 		assert!(matches!(inspect(&bad), Err(Error::Invalid(_))));
-		std::fs::write(d.join("ii-windows-9.9.9.zip"), b"not a zip").unwrap();
-		assert!(matches!(inspect(&d.join("ii-windows-9.9.9.zip")), Err(Error::Zip(_))));
+		std::fs::write(d.join("unyxedshell-9.9.9.zip"), b"not a zip").unwrap();
+		assert!(matches!(inspect(&d.join("unyxedshell-9.9.9.zip")), Err(Error::Zip(_))));
 		std::fs::remove_dir_all(&d).unwrap();
 	}
 
@@ -321,18 +321,18 @@ mod tests {
 		let arm = pe(arch::MACHINE_ARM64);
 		let x64 = pe(arch::MACHINE_X64);
 
-		let named_plain = d.join("ii-windows-26.1.2.0.zip");
-		make_zip(&named_plain, "", &[("qsw.exe", &arm), ("qs.exe", &arm), ("config/ii/shell.qml", b"x")]);
+		let named_plain = d.join("unyxedshell-26.1.2.0.zip");
+		make_zip(&named_plain, "", &[("qsw.exe", &arm), ("qs.exe", &arm), ("config/unyxedshell/shell.qml", b"x")]);
 		let info = inspect(&named_plain).unwrap();
 		assert_eq!(info.arch, Arch::Arm64, "the binary wins over the name");
 		assert_eq!(info.version, "26.1.2.0");
 
-		let named_arm = d.join("ii-windows-26.1.2.0-arm64.zip");
-		make_zip(&named_arm, "ii-windows/", &[("qsw.exe", &x64), ("qs.exe", &x64), ("config/ii/shell.qml", b"x")]);
+		let named_arm = d.join("unyxedshell-26.1.2.0-arm64.zip");
+		make_zip(&named_arm, "unyxedshell/", &[("qsw.exe", &x64), ("qs.exe", &x64), ("config/unyxedshell/shell.qml", b"x")]);
 		assert_eq!(inspect(&named_arm).unwrap().arch, Arch::X64);
 
-		let stub = d.join("ii-windows-26.1.3.0-arm64.zip");
-		make_zip(&stub, "", &[("qsw.exe", b"MZ"), ("qs.exe", b"MZ"), ("config/ii/shell.qml", b"x")]);
+		let stub = d.join("unyxedshell-26.1.3.0-arm64.zip");
+		make_zip(&stub, "", &[("qsw.exe", b"MZ"), ("qs.exe", b"MZ"), ("config/unyxedshell/shell.qml", b"x")]);
 		let info = inspect(&stub).unwrap();
 		assert_eq!(
 			(info.arch, info.version.as_str()),
@@ -344,9 +344,9 @@ mod tests {
 
 	#[test]
 	fn release_package_on_this_runner() {
-		let Ok(path) = std::env::var("IIW_TEST_PACKAGE") else { return };
+		let Ok(path) = std::env::var("UNYX_TEST_PACKAGE") else { return };
 		let info = inspect(Path::new(&path)).unwrap();
-		if let Some(want) = std::env::var("IIW_EXPECT_PACKAGE_ARCH").ok().and_then(|v| Arch::parse(&v)) {
+		if let Some(want) = std::env::var("UNYX_EXPECT_PACKAGE_ARCH").ok().and_then(|v| Arch::parse(&v)) {
 			assert_eq!(info.arch, want);
 		}
 		assert!(info.has_setup_exe, "{path} has no {}", crate::SETUP_EXE);
@@ -359,20 +359,20 @@ mod tests {
 	fn offline_package_for_this_pc() {
 		let d = tmp("offline");
 		let touch = |n: &str| std::fs::write(d.join(n), b"zip").unwrap();
-		touch("ii-windows-26.1.2.0.zip");
-		touch("ii-windows-26.1.2.0-arm64.zip");
-		touch("ii-windows-26.1.1.0-arm64.zip");
-		touch("ii-windows-setup.exe");
-		assert_eq!(find_offline(&d, Arch::X64).unwrap(), d.join("ii-windows-26.1.2.0.zip"));
-		assert_eq!(find_offline(&d, Arch::Arm64).unwrap(), d.join("ii-windows-26.1.2.0-arm64.zip"));
-		touch("ii-windows-26.1.3.0.zip");
+		touch("unyxedshell-26.1.2.0.zip");
+		touch("unyxedshell-26.1.2.0-arm64.zip");
+		touch("unyxedshell-26.1.1.0-arm64.zip");
+		touch("unyxedshell-setup.exe");
+		assert_eq!(find_offline(&d, Arch::X64).unwrap(), d.join("unyxedshell-26.1.2.0.zip"));
+		assert_eq!(find_offline(&d, Arch::Arm64).unwrap(), d.join("unyxedshell-26.1.2.0-arm64.zip"));
+		touch("unyxedshell-26.1.3.0.zip");
 		assert_eq!(
 			find_offline(&d, Arch::Arm64).unwrap(),
-			d.join("ii-windows-26.1.3.0.zip"),
+			d.join("unyxedshell-26.1.3.0.zip"),
 			"a newer x64 beats an older arm64"
 		);
-		std::fs::remove_file(d.join("ii-windows-26.1.2.0.zip")).unwrap();
-		std::fs::remove_file(d.join("ii-windows-26.1.3.0.zip")).unwrap();
+		std::fs::remove_file(d.join("unyxedshell-26.1.2.0.zip")).unwrap();
+		std::fs::remove_file(d.join("unyxedshell-26.1.3.0.zip")).unwrap();
 		assert_eq!(find_offline(&d, Arch::X64), None, "an x64 PC never picks an arm64 package");
 		std::fs::remove_dir_all(&d).unwrap();
 	}

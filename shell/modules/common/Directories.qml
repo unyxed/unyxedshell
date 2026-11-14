@@ -62,7 +62,7 @@ Singleton {
     property string tempImages: `${Directories.tempRoot}/media/images`
     property string latexOutput: FileUtils.trimFileProtocol(`${Directories.cache}/media/latex`)
     property string calendarEventsCache: FileUtils.trimFileProtocol(`${Directories.cache}/calendar_events`)
-    property string shellConfig: FileUtils.trimFileProtocol(`${Directories.config}/illogical-impulse`)
+    property string shellConfig: FileUtils.trimFileProtocol(`${Directories.config}/unyxedshell-config`)
     property string shellConfigName: "config.json"
     property string shellConfigPath: `${Directories.shellConfig}/${Directories.shellConfigName}`
     property string userPresetsPath: FileUtils.trimFileProtocol(`${Directories.shellConfig}/presets`)
@@ -93,10 +93,10 @@ Singleton {
     property string windowsTerminalOhMyPoshPlainPath: FileUtils.trimFileProtocol(`${Directories.state}/user/generated/terminal/ii.plain.omp.json`)
     property string windowsTerminalMaterialDarkConfigPath: FileUtils.trimFileProtocol(`${Directories.state}/user/generated/matugen-config-terminal-dark.toml`)
     property string windowsTerminalMaterialDarkPath: FileUtils.trimFileProtocol(`${Directories.state}/user/generated/terminal/material-dark.json`)
-    property string windowsTerminalFragmentDir: `${(Quickshell.env("LOCALAPPDATA") || "").replace(/\\/g, "/")}/Microsoft/Windows Terminal/Fragments/illogical-impulse`
-    property string windowsTerminalFragmentPath: `${Directories.windowsTerminalFragmentDir}/illogical-impulse.json`
+    property string windowsTerminalFragmentDir: `${(Quickshell.env("LOCALAPPDATA") || "").replace(/\\/g, "/")}/Microsoft/Windows Terminal/Fragments/unyxedshell`
+    property string windowsTerminalFragmentPath: `${Directories.windowsTerminalFragmentDir}/unyxedshell.json`
     property string windowsTerminalSettingsJsonPath: `${(Quickshell.env("LOCALAPPDATA") || "").replace(/\\/g, "/")}/Packages/Microsoft.WindowsTerminal_8wekyb3d8bbwe/LocalState/settings.json`
-    property string installDir: `${(Quickshell.env("LOCALAPPDATA") || "").replace(/\\/g, "/")}/ii-windows`
+    property string installDir: `${(Quickshell.env("LOCALAPPDATA") || "").replace(/\\/g, "/")}/unyxedshell`
     property string installManifestPath: `${Directories.installDir}/install-manifest.json`
     property string installVersionPath: `${Directories.installDir}/VERSION`
     property string selfUpdateCachePath: FileUtils.trimFileProtocol(`${Directories.state}/self_update.json`)

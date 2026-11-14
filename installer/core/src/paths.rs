@@ -8,7 +8,7 @@ pub struct Paths {
 	pub start_menu: PathBuf,
 	pub install_dir: PathBuf,
 	pub quickshell: PathBuf,
-	pub ii_config: PathBuf,
+	pub shell_config: PathBuf,
 	pub colors: PathBuf,
 	pub settings: PathBuf,
 	pub user_fonts: PathBuf,
@@ -23,13 +23,13 @@ impl Paths {
 			roaming: roaming.into(),
 			temp: temp.into(),
 			start_menu: start_menu.into(),
-			install_dir: local.join("ii-windows"),
-			ii_config: quickshell.join("ii"),
+			install_dir: local.join("unyxedshell"),
+			shell_config: quickshell.join("unyxedshell"),
 			colors: quickshell.join("State").join("user").join("generated").join("colors.json"),
 			quickshell,
-			settings: local.join("illogical-impulse"),
+			settings: local.join("unyxedshell-config"),
 			user_fonts: local.join("Microsoft").join("Windows").join("Fonts"),
-			wt_fragment: local.join("Microsoft").join("Windows Terminal").join("Fragments").join("illogical-impulse"),
+			wt_fragment: local.join("Microsoft").join("Windows Terminal").join("Fragments").join("unyxedshell"),
 		}
 	}
 
@@ -49,10 +49,10 @@ impl Paths {
 		self.install_dir.join("backup")
 	}
 	pub fn staging(&self) -> PathBuf {
-		self.local.join("ii-windows.staging")
+		self.local.join("unyxedshell.staging")
 	}
 	pub fn previous(&self) -> PathBuf {
-		self.local.join("ii-windows.previous")
+		self.local.join("unyxedshell.previous")
 	}
 	pub fn qs_exe(&self) -> PathBuf {
 		self.install_dir.join("qs.exe")
@@ -61,13 +61,13 @@ impl Paths {
 		self.install_dir.join("qsw.exe")
 	}
 	pub fn settings_qml(&self) -> PathBuf {
-		self.ii_config.join("settings.qml")
+		self.shell_config.join("settings.qml")
 	}
 	pub fn default_colors(&self) -> PathBuf {
-		self.ii_config.join("defaults").join("windows").join("colors.json")
+		self.shell_config.join("defaults").join("windows").join("colors.json")
 	}
 	pub fn quickshell_dirs(&self) -> Vec<PathBuf> {
-		["ii", "State", "cache", "run"].iter().map(|d| self.quickshell.join(d)).collect()
+		["unyxedshell", "State", "cache", "run"].iter().map(|d| self.quickshell.join(d)).collect()
 	}
 	pub fn defender_folders(&self) -> Vec<PathBuf> {
 		vec![self.install_dir.clone(), self.quickshell.clone(), self.settings.clone(), self.temp.join("quickshell")]

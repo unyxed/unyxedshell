@@ -1,11 +1,11 @@
-pub const BEGIN: &str = "# >>> illogical-impulse >>>";
-pub const END: &str = "# <<< illogical-impulse <<<";
+pub const BEGIN: &str = "# >>> unyxedshell >>>";
+pub const END: &str = "# <<< unyxedshell <<<";
 
 const BLOCK_LINES: [&str; 6] = [
 	BEGIN,
-	"# Loads illogical-impulse's terminal setup (prompt, colors, aliases). Remove this block, markers",
+	"# Loads unyxedshell's terminal setup (prompt, colors, aliases). Remove this block, markers",
 	"# included, to turn it off; the ii installer removes it on uninstall.",
-	"$IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\\ii\\defaults\\windows\\terminal\\profile.ps1'",
+	"$IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\\unyxedshell\\defaults\\windows\\terminal\\profile.ps1'",
 	"if (Test-Path -LiteralPath $IiProfile) { . $IiProfile }",
 	END,
 ];
@@ -231,12 +231,12 @@ mod tests {
 
 	#[test]
 	fn block_matches_the_vm_text() {
-		let expected = "# >>> illogical-impulse >>>\r\n\
-# Loads illogical-impulse's terminal setup (prompt, colors, aliases). Remove this block, markers\r\n\
+		let expected = "# >>> unyxedshell >>>\r\n\
+# Loads unyxedshell's terminal setup (prompt, colors, aliases). Remove this block, markers\r\n\
 # included, to turn it off; the ii installer removes it on uninstall.\r\n\
-$IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\\ii\\defaults\\windows\\terminal\\profile.ps1'\r\n\
+$IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\\unyxedshell\\defaults\\windows\\terminal\\profile.ps1'\r\n\
 if (Test-Path -LiteralPath $IiProfile) { . $IiProfile }\r\n\
-# <<< illogical-impulse <<<\r\n";
+# <<< unyxedshell <<<\r\n";
 		assert_eq!(block("\r\n"), expected);
 		assert!(block("\n").is_ascii());
 	}

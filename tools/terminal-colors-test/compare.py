@@ -34,9 +34,9 @@ from multiprocessing import Pool
 from pathlib import Path
 from types import SimpleNamespace
 
-IIW = Path(__file__).resolve().parents[2]
-SCRIPT = IIW / "ii/scripts/colors/generate_colors_material.py"
-TERMSCHEME = IIW / "ii/scripts/colors/terminal/scheme-base.json"
+UNYX = Path(__file__).resolve().parents[2]
+SCRIPT = UNYX / "ii/scripts/colors/generate_colors_material.py"
+TERMSCHEME = UNYX / "ii/scripts/colors/terminal/scheme-base.json"
 NAMES = [f"term{i}" for i in range(16)]
 
 SEEDS = [

@@ -2,7 +2,7 @@
 
 O **illogical-impulse** (ii) é o shell de desktop do end-4 para o Hyprland no Linux: barra,
 painéis laterais, visão geral, lançador, notificações e cores Material You tiradas do papel de
-parede. O **ii-windows** é um port não oficial dele para o Windows 10 e 11, rodando numa versão
+parede. O **unyxedshell** é um port não oficial dele para o Windows 10 e 11, rodando numa versão
 do Quickshell para Windows. É experimental: espere arestas.
 
 Esta página lista o que este instalador muda no seu computador e o que o ii muda enquanto
@@ -11,7 +11,7 @@ administrador, a não ser para o PowerShell 7 opcional.
 
 ## O que é instalado, e onde
 
-- **O programa** vai para `%LOCALAPPDATA%\ii-windows` (cerca de 195 MB): o Quickshell
+- **O programa** vai para `%LOCALAPPDATA%\unyxedshell` (cerca de 195 MB): o Quickshell
   (`qs.exe`, `qsw.exe`), as bibliotecas do Qt, as fontes e os ícones que o ii usa, o
   `matugen.exe` (gera a paleta de cores a partir do papel de parede) e a
   `VirtualDesktopAccessor.dll` (duas versões: uma para o Windows 11 e uma para o Windows 10, em
@@ -22,9 +22,9 @@ administrador, a não ser para o PowerShell 7 opcional.
   cópia deste instalador também fica lá, junto com o
   `install-manifest.json` (o registro de tudo que este instalador mudou, usado para desfazer) e o
   `setup.log`.
-- **Os arquivos do próprio ii** vão para `%LOCALAPPDATA%\quickshell\ii`. Eles são substituídos a
+- **Os arquivos do próprio ii** vão para `%LOCALAPPDATA%\quickshell\unyxedshell`. Eles são substituídos a
   cada instalação, atualização e reparo, então não os edite.
-- **As suas configurações** ficam em `%LOCALAPPDATA%\illogical-impulse` (`config.json` e
+- **As suas configurações** ficam em `%LOCALAPPDATA%\unyxedshell-config` (`config.json` e
   outros). O ii cria esses arquivos conforme você muda as coisas; instalar e atualizar nunca
   mexem neles.
 - **O estado e o cache do ii** (cores atuais, lista de tarefas, histórico de notificações, logs,
@@ -33,7 +33,7 @@ administrador, a não ser para o PowerShell 7 opcional.
   `%LOCALAPPDATA%\cache` (`thumbnails`, `quickshell`), e os arquivos temporários para
   `%TEMP%\quickshell`. Uma paleta de cores padrão é colocada se ainda não houver nenhuma.
 - **Menu Iniciar:** "unyxedshell" (abre o shell) e "unyxedshell Settings".
-- **Aplicativos instalados:** uma entrada chamada "illogical-impulse (ii-windows)". *Modificar*
+- **Aplicativos instalados:** uma entrada chamada "unyxedshell". *Modificar*
   abre este instalador (atualizar, reparar, desinstalar) e *Desinstalar* o abre na página de
   desinstalação.
 - **O download:** o pacote vem da última versão publicada de
@@ -42,7 +42,7 @@ administrador, a não ser para o PowerShell 7 opcional.
 
 Antes da primeira instalação, o instalador também anota como o Windows está agora, para que a
 desinstalação possa voltar a isso: o papel de parede (uma cópia da imagem fica em
-`%LOCALAPPDATA%\ii-windows\restore`), o modo claro ou escuro, a cor de destaque e se a barra de
+`%LOCALAPPDATA%\unyxedshell\restore`), o modo claro ou escuro, a cor de destaque e se a barra de
 tarefas se oculta automaticamente.
 
 ## As opções
@@ -54,7 +54,7 @@ tarefas se oculta automaticamente.
   da barra lateral (números ou ícones dos apps nas áreas de trabalho, quais botões a barra mostra,
   os controles rápidos) e qual layout da janela de configurações abre. Cada cartão tem uma imagem
   de como fica. O instalador só grava `appearance.visualStyle` em
-  `%LOCALAPPDATA%\illogical-impulse\config.json` (criando o arquivo se ele ainda não existir e a
+  `%LOCALAPPDATA%\unyxedshell-config\config.json` (criando o arquivo se ele ainda não existir e a
   escolha não for a padrão); o ii aplica o resto na próxima vez que abrir. Dá para trocar quando
   quiser em Configurações > Básico > Estilo. A atualização mostra a mesma escolha, já marcada com
   o estilo que você usa agora.
@@ -62,12 +62,12 @@ tarefas se oculta automaticamente.
   de dois jeitos (só um deles existe de cada vez, e Configurações > Sistema > Inicialização do ii
   tem a mesma escolha):
   - *Tarefa agendada (abre mais cedo)*, a padrão: uma tarefa na Biblioteca do Agendador de
-    Tarefas chamada `illogical-impulse-<o SID da sua conta>`, criada para o seu usuário sem
+    Tarefas chamada `unyxedshell-<o SID da sua conta>`, criada para o seu usuário sem
     permissão de administrador, que abre o ii um ou dois segundos depois que você entra. A aba
     Inicializar do Gerenciador de Tarefas não lista tarefas agendadas: desligue nas
     Configurações do ii, ou aqui. Se o Windows não deixar o instalador criar a tarefa (por uma
     política, por exemplo), ele usa a entrada no Registro abaixo e avisa.
-  - *Entrada de inicialização no Registro*: `illogical-impulse` na lista "Run" do seu usuário
+  - *Entrada de inicialização no Registro*: `unyxedshell` na lista "Run" do seu usuário
     (`HKCU\Software\Microsoft\Windows\CurrentVersion\Run`), que o Windows abre junto com os outros
     apps de inicialização, uns 15 segundos depois que você entra. As versões anteriores sempre
     usavam esta.
@@ -91,12 +91,12 @@ tarefas se oculta automaticamente.
     removido:
 
     ```
-    # >>> illogical-impulse >>>
-    # Loads illogical-impulse's terminal setup (prompt, colors, aliases). Remove this block, markers
+    # >>> unyxedshell >>>
+    # Loads unyxedshell's terminal setup (prompt, colors, aliases). Remove this block, markers
     # included, to turn it off; the ii installer removes it on uninstall.
-    $IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\ii\defaults\windows\terminal\profile.ps1'
+    $IiProfile = Join-Path $env:LOCALAPPDATA 'quickshell\unyxedshell\defaults\windows\terminal\profile.ps1'
     if (Test-Path -LiteralPath $IiProfile) { . $IiProfile }
-    # <<< illogical-impulse <<<
+    # <<< unyxedshell <<<
     ```
 
     No console clássico (o Windows PowerShell aberto sem o Windows Terminal), o perfil também
@@ -130,7 +130,7 @@ tarefas se oculta automaticamente.
   Spotlight do ii em vez do menu Iniciar (Configurações > Services > Search volta para a visão
   geral original do ii), e Win+Tab, Win+V, Win+A, Win+N, Win+1...0, Win+Q (fecha a janela
   ativa) e Win+D (maximiza) fazem coisas do ii. Win+/ mostra todos; você pode mudá-los em
-  `%LOCALAPPDATA%\illogical-impulse\keybinds.json`. Segurando a tecla Windows, arrastar com o
+  `%LOCALAPPDATA%\unyxedshell-config\keybinds.json`. Segurando a tecla Windows, arrastar com o
   botão esquerdo move a janela sob o ponteiro e com o direito redimensiona (Configurações >
   Interface > Windows tiling desliga isso); esse clique não chega ao app. Tudo isso para quando
   o ii fecha. Enquanto uma janela de um app aberto como administrador está em foco, o Windows
@@ -163,7 +163,7 @@ tarefas se oculta automaticamente.
 - **Windows Terminal:** o ii grava um esquema de cores igual ao tema dele, mais ajustes de fonte,
   cursor, margem e transparência para os perfis do PowerShell e do Prompt de Comando, como um
   *fragmento* do Windows Terminal em
-  `%LOCALAPPDATA%\Microsoft\Windows Terminal\Fragments\illogical-impulse`. Ele não edita o
+  `%LOCALAPPDATA%\Microsoft\Windows Terminal\Fragments\unyxedshell`. Ele não edita o
   `settings.json` do Windows Terminal; só atualiza a data desse arquivo para as janelas abertas
   recarregarem. Desligar o tema do terminal nas configurações do ii remove o fragmento.
 - **Área de transferência:** o ii guarda um histórico do que você copia (até 200 itens), aberto
@@ -195,7 +195,7 @@ tarefas se oculta automaticamente.
   alto-falantes (ou do microfone, se você escolher) e manda uma impressão digital do áudio para os
   servidores do Shazam para identificar a música, como o SongRec faz no Linux.
 - **Chaves de API:** se você salvar uma chave de API no painel de IA do ii, ela fica no
-  Gerenciador de Credenciais do Windows, numa credencial chamada `illogical-impulse`.
+  Gerenciador de Credenciais do Windows, numa credencial chamada `unyxedshell`.
 - **Notificações:** o ii lê as notificações que o Windows mostra (pelo acesso a notificações que
   o Windows dá aos apps) para mostrá-las no painel dele. O Windows continua mostrando os próprios
   avisos também.
@@ -228,13 +228,13 @@ A desinstalação lê o `install-manifest.json` e desfaz o que está nele:
   ligada por padrão; o PowerShell 7 e o FFmpeg também, cada um como sua própria opção, se foi
   este instalador que os instalou), depois remove o próprio winget (`Remove-AppxPackage`) se foi
   este instalador que o instalou no Windows 10, e remove as fontes que ele instalou;
-- apaga a pasta do fragmento do Windows Terminal, `%LOCALAPPDATA%\ii-windows`, as pastas do ii em
+- apaga a pasta do fragmento do Windows Terminal, `%LOCALAPPDATA%\unyxedshell`, as pastas do ii em
   `%LOCALAPPDATA%\quickshell` (`ii`, `State`, `cache`, `run`, mas não `State\user`),
   `%LOCALAPPDATA%\cache\quickshell` e `%TEMP%\quickshell`, e também
   `%LOCALAPPDATA%\cache\thumbnails` se essa pasta não existia antes da instalação;
-- mantém as suas configurações e presets em `%LOCALAPPDATA%\illogical-impulse` (com os backups
+- mantém as suas configurações e presets em `%LOCALAPPDATA%\unyxedshell-config` (com os backups
   dos reparos), as suas notas, tarefas e conversas da IA em `%LOCALAPPDATA%\quickshell\State\user`
-  e a credencial `illogical-impulse` (as chaves de API), para uma instalação futura encontrar
+  e a credencial `unyxedshell` (as chaves de API), para uma instalação futura encontrar
   tudo. Ligue *Também apagar minhas configurações e dados* para apagar isso também; o botão passa
   a dizer *Desinstalar e apagar dados*;
 - volta o papel de parede, o modo claro/escuro, a cor de destaque e a ocultação automática da
@@ -251,8 +251,8 @@ instaladas.
 ## Reparar e atualizar
 
 **Reparar** volta o ii para uma configuração básica de fábrica. Ele move as suas configurações
-(`%LOCALAPPDATA%\illogical-impulse\*.json`) para uma pasta de backup com data,
-`%LOCALAPPDATA%\illogical-impulse\backups\repair-<data>`, para o ii abrir com os padrões.
+(`%LOCALAPPDATA%\unyxedshell-config\*.json`) para uma pasta de backup com data,
+`%LOCALAPPDATA%\unyxedshell-config\backups\repair-<data>`, para o ii abrir com os padrões.
 Depois reinstala os arquivos do programa da versão instalada (baixando-os se preciso), volta a
 paleta de cores para a padrão, limpa o cache de QML do Quickshell, aplica de novo as opções com
 que você instalou e abre o ii outra vez. O jeito como o ii inicia com o Windows fica como está
@@ -278,9 +278,9 @@ lista "Run" (o que as versões de antes da tarefa agendada faziam) passa para a 
   baixa, os botões esperam, e se der errado ele segue com ele mesmo. Um pacote ao lado do instalador
   mais velho que o último release é deixado de lado pelo mais novo. Sem internet, ele segue com o
   que tem.
-- O log do instalador é `%LOCALAPPDATA%\ii-windows\setup.log`. Enquanto roda, o instalador
+- O log do instalador é `%LOCALAPPDATA%\unyxedshell\setup.log`. Enquanto roda, o instalador
   guarda os arquivos temporários dele (o download, os dados de navegador da janela) em
-  `%TEMP%\ii-windows-setup-...` e os apaga alguns segundos depois de fechar.
+  `%TEMP%\unyxedshell-setup-...` e os apaga alguns segundos depois de fechar.
 - A página de opções verifica se as suas pastas Documentos, Área de Trabalho, Imagens e Vídeos
   realmente podem ser abertas, não só se o Windows informa um caminho para elas. Se alguma foi
   redirecionada para dentro do OneDrive e o OneDrive foi removido depois, o Windows continua
@@ -289,7 +289,7 @@ lista "Run" (o que as versões de antes da tarefa agendada faziam) passa para a 
 
 ## Windows 10
 
-O ii-windows também instala no Windows 10 versão 2004 ou mais nova (build 19041; 22H2, build
+O unyxedshell também instala no Windows 10 versão 2004 ou mais nova (build 19041; 22H2, build
 19045, recomendada), ao lado do Windows 11. Algumas coisas funcionam diferente lá:
 
 - Abaixo da build 19041, o instalador se recusa a instalar: uma verificação na página de opções
@@ -341,7 +341,7 @@ O próprio ii também muda um pouco no Windows 10:
 
 ## Código-fonte e licenças
 
-- ii-windows (empacotamento e este instalador):
+- unyxedshell (empacotamento e este instalador):
   [github.com/nunreasonable/ii-windows](https://github.com/nunreasonable/ii-windows)
 - Quickshell para Windows, branch `windows`:
   [github.com/nunreasonable/quickshell](https://github.com/nunreasonable/quickshell). O

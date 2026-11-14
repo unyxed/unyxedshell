@@ -71,7 +71,7 @@ ShellRoot {
 			const id = n.id;
 			n.closed.connect(reason => root.log("closed", id, NotificationCloseReason.toString(reason)));
 
-			if (mirrored && n.summary.startsWith("ii-windows probe")) {
+			if (mirrored && n.summary.startsWith("unyxedshell probe")) {
 				dismissLater.createObject(root, { target: n });
 			}
 		}

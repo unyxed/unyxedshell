@@ -43,7 +43,7 @@ for q in QtQuick QtQml QtCore Qt5Compat QtPositioning Qt; do
 	[ -d "$QT_WIN/qml/$q" ] && copy_tree "$QT_WIN/qml/$q" "$dest/qml/$q"
 done
 rm -rf "$dest/qml/Qt/test" "$dest/qml/QtQuick/Controls/Imagine" "$dest/qml/QtQuick/Controls/Universal"
-VCREDIST_DIR="${VCREDIST_DIR:-$IIW/toolchain/vcredist}"
+VCREDIST_DIR="${VCREDIST_DIR:-$UNYX/toolchain/vcredist}"
 if [ -d "$VCREDIST_DIR" ]; then
 	cp -f "$VCREDIST_DIR"/*.dll "$dest/"
 else

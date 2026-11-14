@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.20)
-project(iiw_blur_shapes_test LANGUAGES CXX)
+project(unyx_blur_shapes_test LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(QS_WINDOWS_SRC "" CACHE PATH "quickshell src/windows directory")
 find_package(Qt6 6.11 REQUIRED COMPONENTS Quick QuickPrivate Qml)
