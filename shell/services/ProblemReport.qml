@@ -10,6 +10,7 @@ import Quickshell.Io
 Singleton {
     id: root
 
+    readonly property bool enabled: false
     property bool collecting: false
     property string zipPath: ""
     property string lastError: ""
@@ -35,7 +36,7 @@ Singleton {
     }
 
     function collect() {
-        if (!Platform.isWindows || root.collecting)
+        if (!root.enabled || !Platform.isWindows || root.collecting)
             return;
         root.collecting = true;
         root.zipPath = "";

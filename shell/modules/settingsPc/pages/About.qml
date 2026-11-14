@@ -268,6 +268,7 @@ ContentPage {
         }
 
         W.StyledText {
+            visible: ProblemReport.enabled
             Layout.fillWidth: true
             Layout.topMargin: 8
             wrapMode: Text.WordWrap
@@ -282,6 +283,7 @@ ContentPage {
         }
 
         GroupedList {
+            visible: ProblemReport.enabled
             ConfigSwitch {
                 buttonIcon: "memory"
                 text: Translation.tr("Include the latest crash dump")
@@ -294,6 +296,7 @@ ContentPage {
         }
 
         Flow {
+            visible: ProblemReport.enabled
             Layout.fillWidth: true
             spacing: 5
 

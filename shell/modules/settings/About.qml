@@ -181,7 +181,7 @@ ContentPage {
         }
     }
     ContentSection {
-        visible: Platform.isWindows
+        visible: Platform.isWindows && ProblemReport.enabled
         icon: "bug_report"
         title: Translation.tr("Report a problem")
 
