@@ -203,41 +203,6 @@ ContentPage {
                     }
                 }
 
-                Rectangle {
-                    Layout.fillWidth: true
-                    implicitHeight: weebCol.implicitHeight + 24
-                    radius: Appearance.rounding.normal
-                    color: Appearance.colors.colLayer1
-
-                    ColumnLayout {
-                        id: weebCol
-                        anchors { fill: parent; margins: 12 }
-                        spacing: 8
-
-                        W.MaterialSymbol {
-                            text: "playing_cards"
-                            iconSize: Appearance.font.pixelSize.huge
-                            color: Appearance.colors.colPrimary
-                        }
-                        W.StyledText {
-                            text: Translation.tr("Weeb")
-                            font.pixelSize: Appearance.font.pixelSize.normal
-                            font.weight: Font.Medium
-                            color: Appearance.colors.colOnLayer1
-                        }
-                        ConfigSelectionArray {
-                            Layout.fillWidth: false
-                            Layout.alignment: Qt.AlignRight
-                            currentValue: Config.options.policies.weeb
-                            onSelected: newValue => { Config.options.policies.weeb = newValue }
-                            options: [
-                                { displayName: Translation.tr("No"), icon: "close", value: 0 },
-                                { displayName: Translation.tr("Yes"), icon: "check", value: 1 },
-                                { displayName: Translation.tr("Closet"), icon: "ev_shadow", value: 2 }
-                            ]
-                        }
-                    }
-                }
             }
 
             Rectangle {
@@ -279,7 +244,7 @@ ContentPage {
                         checked: Config.options.sidebar.media.enable
                         onCheckedChanged: { Config.options.sidebar.media.enable = checked }
                         W.StyledToolTip {
-                            text: Translation.tr("Adds a Media tab next to Intelligence, Translator and Anime in the left sidebar")
+                            text: Translation.tr("Adds a Media tab next to Intelligence and Translator in the left sidebar")
                         }
                     }
                 }

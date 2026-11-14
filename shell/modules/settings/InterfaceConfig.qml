@@ -1453,7 +1453,7 @@ ContentPage {
                 Config.options.sidebar.media.enable = checked;
             }
             StyledToolTip {
-                text: Translation.tr("Adds a Media tab next to Intelligence, Translator and Anime in the left sidebar")
+                text: Translation.tr("Adds a Media tab next to Intelligence and Translator in the left sidebar")
             }
         }
 

@@ -825,37 +825,6 @@ ContentPage {
         }
     }
 
-    ContentSection {
-        icon: "photo_library"
-        title: Translation.tr("Booru")
-
-        ConfigSpinBox {
-            icon: "numbers"
-            text: Translation.tr("Images per request")
-            value: Config.options.sidebar.booru.limit
-            from: 1
-            to: 100
-            stepSize: 1
-            onValueChanged: {
-                Config.options.sidebar.booru.limit = value;
-            }
-        }
-
-        ContentSubsection {
-            title: Translation.tr("Zerochan")
-            tooltip: Translation.tr("Required by Zerochan's API to avoid being rate-limited or banned for anonymous requests.")
-            MaterialTextArea {
-                Layout.fillWidth: true
-                placeholderText: Translation.tr("Zerochan username")
-                text: Config.options.sidebar.booru.zerochan.username
-                wrapMode: TextEdit.Wrap
-                onTextChanged: {
-                    Config.options.sidebar.booru.zerochan.username = text;
-                }
-            }
-        }
-    }
-
     Loader {
         Layout.fillWidth: true
         active: !Platform.isWindows
