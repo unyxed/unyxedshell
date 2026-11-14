@@ -20,7 +20,7 @@ ContentPage {
                 Config.options.panelFamily = newValue;
             }
             options: [
-                { displayName: Translation.tr("illogical-impulse"), icon: "view_quilt", value: "ii" },
+                { displayName: Translation.tr("Classic"), icon: "view_quilt", value: "ii" },
                 { displayName: Translation.tr("Waffle"), icon: "widgets", value: "waffle" }
             ]
         }

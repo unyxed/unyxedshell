@@ -21,7 +21,7 @@ Singleton {
         : `https://api.github.com/repos/${root.repo}/releases/latest`
     readonly property string installedVersionOverride: Quickshell.env("UNYX_SELF_UPDATE_INSTALLED_VERSION") || ""
     readonly property int recheckIntervalMs: 24 * 60 * 60 * 1000
-    readonly property var notifyIdentity: ["-a", "unyxedshell", "-i", "illogical-impulse"]
+    readonly property var notifyIdentity: ["-a", "unyxedshell", "-i", "unyxedshell"]
 
     property string installedVersion: root.installedVersionOverride
     readonly property bool installedIsPrerelease: root._preRank(root._parseVersion(root.installedVersion)?.pre ?? null) < 0

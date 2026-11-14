@@ -17,7 +17,7 @@ Singleton {
     property bool includeCrashDump: false
     readonly property string newIssueUrl: "https://github.com/nunreasonable/ii-windows/issues/new"
     readonly property var styleNames: ({
-            "ii": "illogical-impulse (ii)",
+            "ii": "Classic",
             "end4pc": "end4-pC",
             "nabyscape": "NabyScape"
         })

@@ -704,7 +704,7 @@ ContentPage {
                     }
                     options: [
                         {
-                            displayName: "illogical-impulse",
+                            displayName: "Classic",
                             icon: "auto_awesome",
                             value: "ii"
                         },
@@ -729,7 +729,7 @@ ContentPage {
                     }
                     options: [
                         {
-                            displayName: "illogical-impulse",
+                            displayName: "Classic",
                             icon: "view_sidebar",
                             value: "ii"
                         },

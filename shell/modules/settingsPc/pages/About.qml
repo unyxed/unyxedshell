@@ -312,55 +312,9 @@ ContentPage {
     }
 
     HeroCard {
-        iconSource: Quickshell.iconPath("illogical-impulse")
+        iconSource: Quickshell.iconPath("unyxedshell")
         title: "unyxedshell"
         subtitle: SelfUpdate.installedVersion !== "" ? Translation.tr("Version %1").arg(SelfUpdate.installedVersion) : ""
     }
 
-    HeroCard {
-        iconSource: Quickshell.iconPath("illogical-impulse")
-        title: Translation.tr("illogical-impulse")
-        link: "https://github.com/end-4/dots-hyprland"
-    }
-
-    GridLayout {
-        Layout.fillWidth: true
-        Layout.topMargin: -16
-        columns: 2
-        rowSpacing: 8
-        columnSpacing: 8
-
-        AboutCard {
-            Layout.fillWidth: true
-            icon: "auto_stories"
-            iconShape: W.MaterialShape.Shape.Sunny
-            label: Translation.tr("Dotfiles")
-            value: Translation.tr("Documentation")
-            clickAction: () => Qt.openUrlExternally("https://end-4.github.io/dots-hyprland-wiki/en/ii-qs/02usage/")
-        }
-        AboutCard {
-            Layout.fillWidth: true
-            icon: "adjust"
-            iconShape: W.MaterialShape.Shape.Cookie9Sided
-            label: Translation.tr("Dotfiles")
-            value: Translation.tr("Issues")
-            clickAction: () => Qt.openUrlExternally("https://github.com/end-4/dots-hyprland/issues")
-        }
-        AboutCard {
-            Layout.fillWidth: true
-            icon: "forum"
-            iconShape: W.MaterialShape.Shape.Cookie12Sided
-            label: Translation.tr("Dotfiles")
-            value: Translation.tr("Discussions")
-            clickAction: () => Qt.openUrlExternally("https://github.com/end-4/dots-hyprland/discussions")
-        }
-        AboutCard {
-            Layout.fillWidth: true
-            icon: "favorite"
-            iconShape: W.MaterialShape.Shape.Heart
-            label: Translation.tr("Dotfiles")
-            value: Translation.tr("Donate")
-            clickAction: () => Qt.openUrlExternally("https://github.com/sponsors/end-4")
-        }
-    }
 }
