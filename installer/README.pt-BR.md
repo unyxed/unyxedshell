@@ -32,7 +32,7 @@ administrador, a não ser para o PowerShell 7 opcional.
   miniaturas dos papéis de parede e as imagens do histórico da área de transferência para
   `%LOCALAPPDATA%\cache` (`thumbnails`, `quickshell`), e os arquivos temporários para
   `%TEMP%\quickshell`. Uma paleta de cores padrão é colocada se ainda não houver nenhuma.
-- **Menu Iniciar:** "illogical-impulse" (abre o ii) e "illogical-impulse Settings".
+- **Menu Iniciar:** "unyxedshell" (abre o shell) e "unyxedshell Settings".
 - **Aplicativos instalados:** uma entrada chamada "illogical-impulse (ii-windows)". *Modificar*
   abre este instalador (atualizar, reparar, desinstalar) e *Desinstalar* o abre na página de
   desinstalação.

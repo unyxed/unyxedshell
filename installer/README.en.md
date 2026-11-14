@@ -30,7 +30,7 @@ except for the optional PowerShell 7.
   the clipboard history's images to `%LOCALAPPDATA%\cache` (`thumbnails`, `quickshell`), and
   temporary files to `%TEMP%\quickshell`. A default color palette is put in place if there is
   none yet.
-- **Start menu:** "illogical-impulse" (starts ii) and "illogical-impulse Settings".
+- **Start menu:** "unyxedshell" (starts the shell) and "unyxedshell Settings".
 - **Apps & features:** an entry called "illogical-impulse (ii-windows)". *Modify* opens this
   setup (update, repair, uninstall) and *Uninstall* opens it on the uninstall page.
 - **The download:** the package comes from the latest release of
