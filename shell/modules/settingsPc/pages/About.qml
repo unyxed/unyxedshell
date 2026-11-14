@@ -352,23 +352,5 @@ ContentPage {
             value: Translation.tr("Donate")
             clickAction: () => Qt.openUrlExternally("https://github.com/sponsors/end-4")
         }
-        AboutCard {
-            visible: Platform.isWindows
-            Layout.fillWidth: true
-            icon: "desktop_windows"
-            iconShape: W.MaterialShape.Shape.Square
-            label: "GitHub"
-            value: Translation.tr("ii for Windows")
-            clickAction: () => Qt.openUrlExternally("https://github.com/nunreasonable/dots-hyprland/tree/ii-windows")
-        }
-        AboutCard {
-            visible: Platform.isWindows
-            Layout.fillWidth: true
-            icon: "deployed_code"
-            iconShape: W.MaterialShape.Shape.Burst
-            label: "GitHub"
-            value: Translation.tr("Quickshell for Windows")
-            clickAction: () => Qt.openUrlExternally("https://github.com/nunreasonable/quickshell/tree/windows")
-        }
     }
 }

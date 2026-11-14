@@ -288,28 +288,5 @@ ContentPage {
                 }
             }
         }
-
-        Flow {
-            visible: Platform.isWindows
-            Layout.fillWidth: true
-            spacing: 5
-
-            RippleButtonWithIcon {
-                materialIcon: "desktop_windows"
-                mainText: Translation.tr("ii for Windows")
-                onClicked: {
-                    Qt.openUrlExternally("https://github.com/nunreasonable/dots-hyprland/tree/ii-windows")
-                }
-            }
-            RippleButtonWithIcon {
-                materialIcon: "deployed_code"
-                mainText: Translation.tr("Quickshell for Windows")
-                onClicked: {
-                    Qt.openUrlExternally("https://github.com/nunreasonable/quickshell/tree/windows")
-                }
-            }
-
-            
-        }
     }
 }
