@@ -2374,32 +2374,6 @@ ContentPage {
                     checked: Config.options.background.pauseVideoWhenCovered
                     onCheckedChanged: { Config.options.background.pauseVideoWhenCovered = checked }
                 }
-
-                ConfigTextArea {
-                    id: wppFolderField
-                    Layout.fillWidth: true
-                    buttonIcon: "folder_special"
-                    text: Translation.tr("Wpp folder")
-                    fieldWidth: 300
-                    value: Config.options.wallpaperSelector.wppFolder ?? ""
-                    onValueChanged: {
-                        Config.options.wallpaperSelector.wppFolder = wppFolderField.value;
-                    }
-                }
-
-                ConfigTextArea {
-                    id: wppSpicyFolderField
-                    Layout.fillWidth: true
-                    enabled: SpicyStuff.allowed
-                    buttonIcon: "whatshot"
-                    text: Translation.tr("Wpp (Spicy) folder")
-                    description: Translation.tr("Wallpapers here stay blurred and can't be applied unless Spicy Stuff is available on this account")
-                    fieldWidth: 300
-                    value: Config.options.wallpaperSelector.wppSpicyFolder ?? ""
-                    onValueChanged: {
-                        Config.options.wallpaperSelector.wppSpicyFolder = wppSpicyFolderField.value;
-                    }
-                }
             }
         }
 

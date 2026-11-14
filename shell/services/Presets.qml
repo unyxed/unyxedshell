@@ -29,8 +29,6 @@ Singleton {
     readonly property var allowedRoots: ["appearance", "background", "bar", "calendar", "cheatsheet", "crosshair", "custom", "dock", "interactions", "lock", "notifications", "osd", "overview", "settings", "sidebar", "time", "waffles", "wallpaperSelector"]
     readonly property var forbiddenParts: ["__proto__", "prototype", "constructor"]
     readonly property var spicyKeys: [
-        "wallpaperSelector.wppFolder",
-        "wallpaperSelector.wppSpicyFolder",
         "dock.pinnedApps",
         "bar.screenList",
         "notifications.forceMonitor"

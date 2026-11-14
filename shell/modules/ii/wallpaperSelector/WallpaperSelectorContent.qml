@@ -24,12 +24,6 @@ MouseArea {
     readonly property bool targetShown: root.targetDesktopId === Wallpapers.currentDesktopId
         || (root.targetDesktopId === "" && Wallpapers.currentDesktopWallpaper === "")
 
-    property bool spicyRevealed: false
-    readonly property bool inSpicyDir: Wallpapers.isInSpicyFolder(Wallpapers.effectiveDirectory)
-    readonly property bool spicyBlurActive: root.inSpicyDir && !root.spicyRevealed
-    onInSpicyDirChanged: if (!root.inSpicyDir)
-                             root.spicyRevealed = false
-
     property var quickDirs: [
         {
             icon: "home",
@@ -72,27 +66,6 @@ MouseArea {
             name: "Wallpapers",
             path: `${Directories.pictures}/Wallpapers`,
             visible: true
-        },
-        ...(Config.options.policies.weeb === 1 ? [
-                                                     {
-                                                         icon: "favorite",
-                                                         name: "Homework",
-                                                         path: `${Directories.pictures}/homework`,
-                                                         visible: true
-                                                     }
-                                                 ] : []),
-        {
-            icon: "folder_special",
-            name: "Wpp",
-            path: Config.options.wallpaperSelector.wppFolder,
-            visible: true
-        },
-        {
-            icon: "whatshot",
-            name: "Wpp (Spicy)",
-            path: Config.options.wallpaperSelector.wppSpicyFolder,
-            visible: true,
-            spicy: true
         },
         ...(Config.options.wallpaperSelector.userPath?.trim().length > 0 ? [
                                                                                {
@@ -158,14 +131,13 @@ MouseArea {
 
     function queuePreview() {
         if (!Config.options.background.enableWallpaperPreview || GlobalStates.wallpaperSelectorTarget === "lockWall"
-            || root.spicyBlurActive
             || !root.targetShown)
             return;
         previewTimer.restart();
     }
 
     function previewCurrent() {
-        if (!GlobalStates.wallpaperSelectorOpen || root.spicyBlurActive)
+        if (!GlobalStates.wallpaperSelectorOpen)
             return;
         const model = Wallpapers.folderModel;
         const index = grid.currentIndex;
@@ -190,14 +162,6 @@ MouseArea {
     }
 
     Keys.onPressed: event => {
-        if (root.spicyBlurActive && !(event.modifiers & Qt.AltModifier) && [Qt.Key_Left, Qt.Key_Right,
-                                                                            Qt.Key_Up, Qt.Key_Down,
-                                                                            Qt.Key_Return,
-                                                                            Qt.Key_Enter].includes(
-                    event.key)) {
-            event.accepted = true;
-            return;
-        }
         if (event.key === Qt.Key_Escape) {
             GlobalStates.wallpaperSelectorOpen = false;
             event.accepted = true;
@@ -368,9 +332,6 @@ MouseArea {
                         delegate: RippleButton {
                             id: quickDirButton
                             required property var modelData
-                            readonly property bool isSpicy: modelData.spicy ?? false
-                            readonly property bool spicyDisabled: quickDirButton.isSpicy &&
-                                                                  !SpicyStuff.allowed
                             anchors {
                                 left: parent.left
                                 right: parent.right
@@ -388,7 +349,7 @@ MouseArea {
                                 MaterialSymbol {
                                     color: quickDirButton.toggled ? Appearance.colors.colOnSecondaryContainer :
                                                                     Appearance.colors.colOnLayer1
-                                    opacity: quickDirButton.enabled && !quickDirButton.spicyDisabled ? 1 : 0.4
+                                    opacity: quickDirButton.enabled ? 1 : 0.4
                                     iconSize: Appearance.font.pixelSize.larger
                                     text: quickDirButton.modelData.icon
                                     fill: quickDirButton.toggled ? 1 : 0
@@ -396,17 +357,10 @@ MouseArea {
                                 StyledText {
                                     Layout.fillWidth: true
                                     horizontalAlignment: Text.AlignLeft
-                                    opacity: quickDirButton.enabled && !quickDirButton.spicyDisabled ? 1 : 0.4
+                                    opacity: quickDirButton.enabled ? 1 : 0.4
                                     color: quickDirButton.toggled ? Appearance.colors.colOnSecondaryContainer :
                                                                     Appearance.colors.colOnLayer1
                                     text: Translation.tr(quickDirButton.modelData.name)
-                                }
-                                MaterialSymbol {
-                                    visible: quickDirButton.spicyDisabled
-                                    opacity: 0.6
-                                    iconSize: Appearance.font.pixelSize.normal
-                                    color: Appearance.colors.colOnLayer1
-                                    text: "lock"
                                 }
                             }
                         }
@@ -467,14 +421,10 @@ MouseArea {
                         Item {
                             id: localGridBlurWrapper
                             anchors.fill: parent
-                            layer.enabled: root.spicyBlurActive
-                            layer.effect: FastBlur {
-                                radius: 96
-                            }
 
                             GridView {
                                 id: grid
-                                visible: Wallpapers.folderModel.count > 0 && !(root.inSpicyDir && !SpicyStuff.allowed)
+                                visible: Wallpapers.folderModel.count > 0
 
                                 readonly property int columns: root.columns
                                 readonly property int rows: Math.max(1, Math.ceil(count / columns))
@@ -549,79 +499,6 @@ MouseArea {
                             }
                         }
 
-                        Item {
-                            id: spicyWarning
-                            anchors.fill: parent
-                            visible: root.spicyBlurActive
-                            z: 8
-
-                            MouseArea {
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                acceptedButtons: Qt.AllButtons
-                                onWheel: wheel => wheel.accepted = true
-                            }
-
-                            Rectangle {
-                                anchors.fill: parent
-                                color: ColorUtils.transparentize(Appearance.colors.colLayer0, 0.4)
-                            }
-
-                            Rectangle {
-                                anchors.centerIn: parent
-                                implicitWidth: spicyWarningContent.implicitWidth + 48
-                                implicitHeight: spicyWarningContent.implicitHeight + 40
-                                radius: Appearance.rounding.large
-                                color: Appearance.colors.colLayer2
-
-                                ColumnLayout {
-                                    id: spicyWarningContent
-                                    anchors.centerIn: parent
-                                    spacing: 10
-
-                                    MaterialSymbol {
-                                        Layout.alignment: Qt.AlignHCenter
-                                        text: "visibility_off"
-                                        iconSize: 40
-                                        color: Appearance.colors.colOnLayer2
-                                    }
-                                    StyledText {
-                                        Layout.alignment: Qt.AlignHCenter
-                                        text: Translation.tr("Sensitive content")
-                                        font.pixelSize: Appearance.font.pixelSize.larger
-                                        color: Appearance.colors.colOnLayer2
-                                    }
-                                    StyledText {
-                                        Layout.alignment: Qt.AlignHCenter
-                                        Layout.maximumWidth: 420
-                                        horizontalAlignment: Text.AlignHCenter
-                                        wrapMode: Text.Wrap
-                                        text: SpicyStuff.allowed ? Translation.tr(
-                                                                       "This folder contains spicy wallpapers.\nMake sure no one is looking before showing it.") :
-                                                                   SpicyStuff.restriction
-                                        color: Appearance.colors.colSubtext
-                                    }
-                                    RowLayout {
-                                        Layout.alignment: Qt.AlignHCenter
-                                        Layout.topMargin: 6
-                                        spacing: 8
-                                        DialogButton {
-                                            buttonText: Translation.tr("Go back")
-                                            onClicked: Wallpapers.setDirectory(`${Directories.pictures
-                                                                               }/Wallpapers`)
-                                        }
-                                        DialogButton {
-                                            visible: SpicyStuff.allowed
-                                            buttonText: Translation.tr("Show")
-                                            onClicked: {
-                                                root.spicyRevealed = true;
-                                                root.forceActiveFocus();
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        }
                     }
 
                     Row {
@@ -806,7 +683,6 @@ MouseArea {
             if (GlobalStates.wallpaperSelectorOpen && monitorIsFocused) {
                 filterField.forceActiveFocus();
             } else if (!GlobalStates.wallpaperSelectorOpen) {
-                root.spicyRevealed = false;
                 previewTimer.stop();
                 Wallpapers.stopPreview();
                 GlobalStates.wallpaperSelectorTarget = "wallpaper";

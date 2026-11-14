@@ -86,7 +86,6 @@ Singleton {
     function startPreview(path) {
         if (!path || path.length === 0) return;
         if (Platform.isWindows && root.isVideoPath(path)) return;
-        if (!SpicyStuff.allowed && root.isInSpicyFolder(path)) return;
         root.previewPath = path;
     }
 
@@ -119,10 +118,6 @@ Singleton {
 
     function setLockWallpaper(path) {
         const clean = path ? FileUtils.trimFileProtocol(path.toString()) : "";
-        if (clean.length > 0 && !SpicyStuff.allowed && root.isInSpicyFolder(clean)) {
-            console.warn("[Wallpapers] Not using a lock screen wallpaper from the Spicy Stuff folder:", SpicyStuff.restriction);
-            return;
-        }
         Config.options.background.lockWall = clean;
         if (Platform.isWindows) root._applyWindowsLockScreen(clean.length > 0 ? clean : root.stillPath);
     }
@@ -248,17 +243,10 @@ Singleton {
         return root.normalizedPath(trimmed);
     }
 
-    function isInSpicyFolder(path) {
-        const base = root.canonicalPath(Config.options.wallpaperSelector.wppSpicyFolder);
-        const target = root.canonicalPath(path);
-        return base.length > 0 && (target === base || target.startsWith(base + "/"));
-    }
-
     function desktopWallpaperFor(desktopId) {
         if (!root.desktopWallpapersActive || !desktopId) return "";
         const path = root.desktopWallpaperPaths[desktopId] ?? "";
         if (!path || root.isVideoPath(path)) return "";
-        if (!SpicyStuff.allowed && root.isInSpicyFolder(path)) return "";
         if (WindowsNative.fsUtils && WindowsNative.fsUtils.classify(path) !== "file") return "";
         return path;
     }
@@ -299,10 +287,6 @@ Singleton {
         if (!Platform.isWindows || !Config.ready || !desktopId) return;
         const clean = path ? FileUtils.trimFileProtocol(path.toString()) : "";
         if (clean.length > 0 && root.isVideoPath(clean)) return;
-        if (clean.length > 0 && !SpicyStuff.allowed && root.isInSpicyFolder(clean)) {
-            console.warn("[Wallpapers] Not using a desktop wallpaper from the Spicy Stuff folder:", SpicyStuff.restriction);
-            return;
-        }
         const next = Object.assign({}, root.desktopWallpaperPaths);
         if (clean.length > 0 && root.normalizedPath(clean) !== root.normalizedPath(Config.options.background.wallpaperPath))
             next[desktopId] = clean;
@@ -343,10 +327,6 @@ Singleton {
 
     function apply(path, darkMode = Appearance.m3colors.darkmode) {
         if (!path || path.length === 0) return;
-        if (!SpicyStuff.allowed && root.isInSpicyFolder(path)) {
-            console.warn("[Wallpapers] Not applying a wallpaper from the Spicy Stuff folder:", SpicyStuff.restriction);
-            return;
-        }
         const desktopId = root._targetDesktop();
         if (desktopId !== "") {
             root._applyToDesktop(desktopId, path, darkMode);
@@ -421,10 +401,6 @@ Singleton {
     function _retheme(path, darkMode, applyToSystem = true, videoPath = "") {
         const wn = WindowsNative.wallpaper;
         if (!wn) return;
-        if (!SpicyStuff.allowed && root.isInSpicyFolder(path)) {
-            console.warn("[Wallpapers] Not using a wallpaper from the Spicy Stuff folder:", SpicyStuff.restriction);
-            return;
-        }
 
         const hasPath = !!path && path.length > 0;
         if (hasPath && root.isVideoPath(path)) {
@@ -770,8 +746,6 @@ Singleton {
     function generateThumbnail(size: string) {
         if (!["normal", "large", "x-large", "xx-large"].includes(size)) throw new Error("Invalid thumbnail size");
         root.thumbnailGenerationProgress = 0
-        if (!SpicyStuff.allowed && root.isInSpicyFolder(root.directory))
-            return;
         if (Platform.isWindows) {
             root._generateThumbnailsWindows(size, root.directory);
             return;

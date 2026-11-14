@@ -2363,29 +2363,6 @@ ContentPage {
             }
         }
 
-        MaterialTextArea {
-            Layout.fillWidth: true
-            placeholderText: Translation.tr("Wpp folder")
-            text: Config.options.wallpaperSelector.wppFolder ?? ""
-            wrapMode: TextEdit.NoWrap
-            onTextChanged: {
-                Config.options.wallpaperSelector.wppFolder = text;
-            }
-        }
-
-        MaterialTextArea {
-            Layout.fillWidth: true
-            enabled: SpicyStuff.allowed
-            placeholderText: Translation.tr("Wpp (Spicy) folder")
-            text: Config.options.wallpaperSelector.wppSpicyFolder ?? ""
-            wrapMode: TextEdit.NoWrap
-            onTextChanged: {
-                Config.options.wallpaperSelector.wppSpicyFolder = text;
-            }
-            StyledToolTip {
-                text: Translation.tr("Wallpapers here stay blurred and can't be applied unless Spicy Stuff is available on this account")
-            }
-        }
     }
 
     ContentSection {

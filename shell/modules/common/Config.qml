@@ -1029,8 +1029,6 @@ Singleton {
                 property bool showHomePath: true
                 property string userPath: ""
                 property string liveWallpapersPath: ""
-                property string wppFolder: `${FileUtils.trimFileProtocol(Directories.home)}/Downloads/Wpp`
-                property string wppSpicyFolder: `${FileUtils.trimFileProtocol(Directories.home)}/Downloads/Wpp_spicy`
                 property bool showSearchbar: true
                 property int columns: 4
                 property bool closeAfterSelection: true
