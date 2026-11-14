@@ -675,36 +675,6 @@ ContentPage {
                             }
                         }
                     }
-                    W.RippleButtonWithIcon {
-                        enabled: !RandomWallpaper.running
-                        visible: Config.options.policies.weeb === 1
-                        Layout.fillWidth: true
-                        buttonRadius: Appearance.rounding.small
-                        materialIcon: "ifl"
-                        mainText: RandomWallpaper.running ? Translation.tr("Be patient...") : Translation.tr("Random: Konachan")
-                        onClicked: {
-                            RandomWallpaper.fetch("konachan");
-                        }
-                        W.StyledToolTip {
-                            text: SpicyStuff.konachan
-                                ? Translation.tr("Random Anime wallpaper from Konachan, Spicy Stuff included\nImage is saved to ~/Pictures/Wallpapers")
-                                : Translation.tr("Random SFW Anime wallpaper from Konachan\nImage is saved to ~/Pictures/Wallpapers")
-                        }
-                    }
-                    W.RippleButtonWithIcon {
-                        enabled: !RandomWallpaper.running
-                        visible: Config.options.policies.weeb === 1
-                        Layout.fillWidth: true
-                        buttonRadius: Appearance.rounding.small
-                        materialIcon: "ifl"
-                        mainText: RandomWallpaper.running ? Translation.tr("Be patient...") : Translation.tr("Random: osu! seasonal")
-                        onClicked: {
-                            RandomWallpaper.fetch("osu");
-                        }
-                        W.StyledToolTip {
-                            text: Translation.tr("Random osu! seasonal background\nImage is saved to ~/Pictures/Wallpapers")
-                        }
-                    }
                 }
 
                 ConfigSwitch {

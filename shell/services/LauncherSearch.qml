@@ -82,12 +82,6 @@ Singleton {
             }
         },
         {
-            action: "konachanwallpaper",
-            execute: () => {
-                RandomWallpaper.fetch("konachan");
-            }
-        },
-        {
             action: "light",
             execute: () => {
                 Wallpapers.setMode(false);

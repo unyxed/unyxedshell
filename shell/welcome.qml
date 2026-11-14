@@ -323,23 +323,6 @@ ApplicationWindow {
                         RowLayout {
                             Layout.alignment: Qt.AlignHCenter
                             RippleButtonWithIcon {
-                                id: rndWallBtn
-                                visible: Config.options.policies.weeb === 1
-                                Layout.alignment: Qt.AlignHCenter
-                                buttonRadius: Appearance.rounding.small
-                                materialIcon: "ifl"
-                                enabled: !RandomWallpaper.running
-                                mainText: RandomWallpaper.running ? Translation.tr("Be patient...") : Translation.tr("Random: Konachan")
-                                onClicked: {
-                                    RandomWallpaper.fetch("konachan");
-                                }
-                                StyledToolTip {
-                                    text: SpicyStuff.konachan
-                                        ? Translation.tr("Random Anime wallpaper from Konachan, Spicy Stuff included\nImage is saved to ~/Pictures/Wallpapers")
-                                        : Translation.tr("Random SFW Anime wallpaper from Konachan\nImage is saved to ~/Pictures/Wallpapers")
-                                }
-                            }
-                            RippleButtonWithIcon {
                                 materialIcon: "wallpaper"
                                 StyledToolTip {
                                     text: Translation.tr("Pick wallpaper image on your system")
